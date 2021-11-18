@@ -1,18 +1,9 @@
 import { Box, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
-import socketIOClient from "socket.io-client";
 import BotLogs from "../components/BotLogs";
 import CustomAppBar from "../components/CustomAppBar";
 import InfoForm from "../components/InfoForm";
 
 function WorkawayMessaging() {
-  const ENDPOINT = "http://localhost:4999";
-  const [socket, setSocket] = useState(null);
-
-  useEffect(() => {
-    setSocket(socketIOClient(ENDPOINT));
-  }, []);
-
   return (
     <div>
       <CustomAppBar />
@@ -30,8 +21,8 @@ function WorkawayMessaging() {
           flexWrap: "wrap",
         }}
       >
-        <InfoForm socket={socket} />
-        <BotLogs socket={socket} />
+        <InfoForm />
+        <BotLogs />
       </Box>
     </div>
   );

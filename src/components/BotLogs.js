@@ -1,51 +1,57 @@
 import { Card, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
+import socketIOClient from "socket.io-client";
 
-const BotLogs = ({ socket }) => {
-  // const [connectionMessage, setConnectionMessage] = useState("");
+// TODO: move inside the compoenent?
+let botLogsMessageSentIsFirst = true;
+let botLogsMembersScrappedIsFirst = true;
+
+const BotLogs = () => {
+  const ENDPOINT = "http://localhost:4999";
+  const [socket, setSocket] = useState(null);
+
   const [botLogs, setBotLogs] = useState([]);
 
-  const [botLogsMessageSentIsFirst, setBotLogsMessageSentIsFirst] =
-    useState(true);
-  const [botLogsMembersScrappedIsFirst, setBotLogsMembersScrappedIsFirst] =
-    useState(true);
-
-  if (socket !== null) {
-    socket.on("connection", (log) => {
-      setBotLogs([...botLogs, log]);
-    });
-  }
+  const [isSocketInitialized, setIsSocketInitialized] = useState(false);
 
   useEffect(() => {
-    console.log("in useEffect");
-    if (socket !== null) {
+    if (socket === null) {
+      setSocket(socketIOClient(ENDPOINT));
+    }
+
+    if (socket !== null && !isSocketInitialized) {
+      setIsSocketInitialized(true);
+      socket.on("connection", (log) => {
+        setBotLogs((b) => [...b, log]);
+      });
+
       socket.on("botLogs", (log) => {
-        setBotLogs([...botLogs, log]);
+        setBotLogs((b) => [...b, log]);
       });
 
       socket.on("botLogsMessageSent", (log) => {
         if (botLogsMessageSentIsFirst) {
-          setBotLogs([...botLogs, log]);
-          setBotLogsMessageSentIsFirst(false);
+          setBotLogs((b) => [...b, log]);
+          botLogsMessageSentIsFirst = false;
         } else {
-          setBotLogs([...botLogs.slice(0, -1), log]);
+          setBotLogs((b) => [...b.slice(0, -1), log]);
         }
       });
 
       socket.on("botLogsMembersScrapped", (log) => {
         if (botLogsMembersScrappedIsFirst) {
-          setBotLogs([...botLogs, log]);
-          setBotLogsMembersScrappedIsFirst(false);
+          setBotLogs((b) => [...b, log]);
+          botLogsMembersScrappedIsFirst = false;
         } else {
-          setBotLogs([...botLogs.slice(0, -1), log]);
+          setBotLogs((b) => [...b.slice(0, -1), log]);
         }
       });
     }
   }, [
-    botLogs,
-    // socket,
+    socket,
     botLogsMessageSentIsFirst,
     botLogsMembersScrappedIsFirst,
+    isSocketInitialized,
   ]);
 
   return (

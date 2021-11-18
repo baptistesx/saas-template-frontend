@@ -14,7 +14,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
-const InfoForm = ({ socket }) => {
+const InfoForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
 
@@ -31,8 +31,6 @@ const InfoForm = ({ socket }) => {
     setIsLoading(true);
     const res = await axios.post(`http://localhost:4999/startBot`, data);
     setIsLoading(false);
-
-    socket.emit("startBot", "heyy");
   };
   const theme = useTheme();
 
@@ -76,6 +74,7 @@ const InfoForm = ({ socket }) => {
             />
             <TextField
               fullWidth
+              type={"password"}
               placeholder="Password"
               {...register("password")}
               required
