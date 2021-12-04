@@ -26,7 +26,11 @@ const BotLogs = () => {
       });
 
       socket.on("botLogs", (log) => {
-        setBotLogs((b) => [...b, log]);
+        if (log.constructor === Array) {
+          setBotLogs((b) => [b[0], ...log]);
+        } else {
+          setBotLogs((b) => [...b, log]);
+        }
       });
 
       socket.on("botLogsMessageSent", (log) => {
@@ -68,8 +72,8 @@ const BotLogs = () => {
         flexDirection: "column",
       }}
     >
-      {botLogs.map((log) => (
-        <Typography key={log}>{log}</Typography>
+      {botLogs.map((log, index) => (
+        <Typography key={log + index}>{log}</Typography>
       ))}
     </Card>
   );
