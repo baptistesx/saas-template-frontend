@@ -52,8 +52,6 @@ const InfoForm = () => {
   const [detectionRadius, setDetectionRadius] = useState("");
 
   const handleChangeDetectionRadius = (event) => {
-    console.log("iin");
-    console.log(event.target.value);
     setDetectionRadius(event.target.value);
   };
 
