@@ -1,4 +1,6 @@
-import { Card, Typography } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
+import { Box, Card, Typography } from "@mui/material";
+import axios from "axios";
 import { useEffect, useState } from "react";
 import socketIOClient from "socket.io-client";
 
@@ -14,6 +16,8 @@ const BotLogs = () => {
 
   const [isSocketInitialized, setIsSocketInitialized] = useState(false);
 
+  const [isClearing, setIsClearing] = useState(false);
+
   useEffect(() => {
     if (socket === null) {
       setSocket(socketIOClient(ENDPOINT));
@@ -23,6 +27,7 @@ const BotLogs = () => {
       setIsSocketInitialized(true);
       socket.on("connection", (log) => {
         setBotLogs((b) => [...b, log]);
+        scrollLogsDown();
       });
 
       socket.on("botLogs", (log) => {
@@ -31,6 +36,7 @@ const BotLogs = () => {
         } else {
           setBotLogs((b) => [...b, log]);
         }
+        scrollLogsDown();
       });
 
       socket.on("botLogsMessageSent", (log) => {
@@ -40,6 +46,7 @@ const BotLogs = () => {
         } else {
           setBotLogs((b) => [...b.slice(0, -1), log]);
         }
+        scrollLogsDown();
       });
 
       socket.on("botLogsMembersScrapped", (log) => {
@@ -49,6 +56,7 @@ const BotLogs = () => {
         } else {
           setBotLogs((b) => [...b.slice(0, -1), log]);
         }
+        scrollLogsDown();
       });
     }
   }, [
@@ -58,23 +66,58 @@ const BotLogs = () => {
     isSocketInitialized,
   ]);
 
+  const handleClickClearConsole = async () => {
+    setIsClearing(true);
+
+    const res = await axios.get(`http://localhost:4999/clearLogs`);
+
+    if (res.status === 200) {
+      setBotLogs((b) => []);
+    }
+
+    setIsClearing(false);
+  };
+
+  const scrollLogsDown = () => {
+    var elem = document.querySelector("#logs");
+    elem.scrollTop = elem.scrollHeight;
+  };
+
   return (
     <Card
+      id="logs"
       sx={{
         width: "45%",
         minWidth: "320px",
+        maxHeight: "95vh",
         m: 1,
         p: 1,
         display: "flex",
         bgcolor: "#353b48",
         color: "#ffffff",
         flexGrow: 1,
+        justifyContent: "space-between",
         flexDirection: "column",
+        overflow: "auto",
       }}
     >
-      {botLogs.map((log, index) => (
-        <Typography key={log + index}>{log}</Typography>
-      ))}
+      <Box>
+        {botLogs.map((log, index) => (
+          <Typography key={log + index}>{log}</Typography>
+        ))}
+      </Box>
+
+      <LoadingButton
+        variant="contained"
+        loading={isClearing}
+        sx={{
+          m: 1,
+        }}
+        disabled={false}
+        onClick={handleClickClearConsole}
+      >
+        Clear logs
+      </LoadingButton>
     </Card>
   );
 };

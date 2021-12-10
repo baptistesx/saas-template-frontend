@@ -16,6 +16,7 @@ import { Controller, useForm } from "react-hook-form";
 
 const InfoForm = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isStopping, setIsStopping] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
 
   const {
@@ -52,6 +53,18 @@ const InfoForm = () => {
     setDetectionRadius(event.target.value);
   };
 
+  const handleClickStopBot = async () => {
+    setIsStopping(true);
+
+    const res = await axios.get(`http://localhost:4999/stopBot`);
+
+    if (res.status === 200) {
+      console.log("bot well stopped");
+    }
+
+    setIsStopping(false);
+  };
+
   return (
     <Box sx={{ width: "45%", minWidth: "320px", m: 1 }}>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -59,6 +72,12 @@ const InfoForm = () => {
           <CardContent>
             <Typography variant="h2">Info</Typography>
 
+            <FormControlLabel
+              control={<Checkbox />}
+              label="Dev mode (don't send messages)"
+              {...register("developmentMode")}
+              sx={{ m: 1 }}
+            />
             <FormControlLabel
               control={<Checkbox />}
               label="Headless"
@@ -181,11 +200,12 @@ const InfoForm = () => {
             <LoadingButton
               // type="submit"
               variant="contained"
-              loading={isLoading}
+              loading={isStopping}
               sx={{
                 m: 1,
               }}
               disabled={isConnected}
+              onClick={handleClickStopBot}
             >
               Stop the bot !
             </LoadingButton>
