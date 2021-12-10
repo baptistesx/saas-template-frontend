@@ -18,6 +18,7 @@ const InfoForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isStopping, setIsStopping] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
+  const [isRunning, setIsRunning] = useState(false);
 
   const {
     register,
@@ -31,6 +32,9 @@ const InfoForm = () => {
     console.log(data);
     setIsLoading(true);
     const res = await axios.post(`http://localhost:4999/startBot`, data);
+    if (res.status === 200) {
+      setIsRunning(true);
+    }
     setIsLoading(false);
   };
   const theme = useTheme();
@@ -60,6 +64,7 @@ const InfoForm = () => {
 
     if (res.status === 200) {
       console.log("bot well stopped");
+      setIsRunning(false);
     }
 
     setIsStopping(false);
@@ -192,7 +197,7 @@ const InfoForm = () => {
               sx={{
                 m: 1,
               }}
-              disabled={isConnected}
+              disabled={isConnected || isRunning}
             >
               Start the bot !
             </LoadingButton>
@@ -204,7 +209,7 @@ const InfoForm = () => {
               sx={{
                 m: 1,
               }}
-              disabled={isConnected}
+              disabled={isConnected || !isRunning}
               onClick={handleClickStopBot}
             >
               Stop the bot !
