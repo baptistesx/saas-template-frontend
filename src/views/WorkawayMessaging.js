@@ -1,6 +1,7 @@
 import { Box, Typography } from "@mui/material";
 import BotLogs from "../components/BotLogs";
 import CustomAppBar from "../components/CustomAppBar";
+import FilesSection from "../components/FilesSection";
 import InfoForm from "../components/InfoForm";
 
 function WorkawayMessaging() {
@@ -24,6 +25,8 @@ function WorkawayMessaging() {
         <InfoForm />
         <BotLogs />
       </Box>
+
+      <FilesSection />
     </div>
   );
 }
