@@ -13,12 +13,13 @@ import { Box, useTheme } from "@mui/system";
 import axios from "axios";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { ENDPOINT } from "../utils/constants";
 
 const InfoForm = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isStarting, setIsStarting] = useState(false);
   const [isStopping, setIsStopping] = useState(false);
-  const [isConnected, setIsConnected] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
+  const theme = useTheme();
 
   const {
     register,
@@ -28,40 +29,24 @@ const InfoForm = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = async (data) => {
-    console.log(data);
-    setIsLoading(true);
-    const res = await axios.post(`http://localhost:4999/startBot`, data);
+  const onStartBotClick = async (data) => {
+    setIsStarting(true);
+
+    const res = await axios.post(`${ENDPOINT}/startBot`, data);
+
     if (res.status === 200) {
       setIsRunning(true);
     }
-    setIsLoading(false);
-  };
-  const theme = useTheme();
 
-  // console.log(watch("example")); // watch input value by passing the name of it
-
-  // const handleSubmit =
-
-  const [cityAndCountry, setCityAndCountry] = useState("");
-
-  const handleChangeCityAndCountry = (event) => {
-    setCityAndCountry(event.target.value);
+    setIsStarting(false);
   };
 
-  const [detectionRadius, setDetectionRadius] = useState("");
-
-  const handleChangeDetectionRadius = (event) => {
-    setDetectionRadius(event.target.value);
-  };
-
-  const handleClickStopBot = async () => {
+  const onStopBotClick = async () => {
     setIsStopping(true);
 
-    const res = await axios.get(`http://localhost:4999/stopBot`);
+    const res = await axios.get(`${ENDPOINT}/stopBot`);
 
     if (res.status === 200) {
-      console.log("bot well stopped");
       setIsRunning(false);
     }
 
@@ -70,19 +55,19 @@ const InfoForm = () => {
 
   return (
     <Box sx={{ width: "45%", minWidth: "320px", m: 1 }}>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onStartBotClick)}>
         <Card sx={{ p: 1 }}>
           <CardContent>
             <Typography variant="h2">Info</Typography>
 
             <FormControlLabel
-              control={<Checkbox />}
+              control={<Checkbox defaultChecked />}
               label="Dev mode (don't send messages)"
               {...register("developmentMode")}
               sx={{ m: 1 }}
             />
             <FormControlLabel
-              control={<Checkbox />}
+              control={<Checkbox defaultChecked />}
               label="Headless"
               {...register("headless")}
               sx={{ m: 1 }}
@@ -109,12 +94,13 @@ const InfoForm = () => {
               {...register("city")}
               required
               sx={{ m: 1 }}
+              defaultValue="paris"
             />
 
             <Controller
               name="detectionRadius"
               control={control}
-              defaultValue=""
+              defaultValue={5}
               rules={{ required: "Detection radius needed" }}
               render={({ field: { onChange, value } }) => (
                 <TextField
@@ -127,6 +113,11 @@ const InfoForm = () => {
                 >
                   <MenuItem value={5}>5 km</MenuItem>
                   <MenuItem value={10}>10 km</MenuItem>
+                  <MenuItem value={20}>20 km</MenuItem>
+                  <MenuItem value={50}>50 km</MenuItem>
+                  <MenuItem value={100}>100 km</MenuItem>
+                  <MenuItem value={250}>250 km</MenuItem>
+                  <MenuItem value={500}>500 km</MenuItem>
                 </TextField>
               )}
             />
@@ -142,6 +133,7 @@ const InfoForm = () => {
                 }}
                 sx={{ m: 1 }}
                 {...register("minimumAge")}
+                defaultValue="20"
               />
 
               <TextField
@@ -154,11 +146,12 @@ const InfoForm = () => {
                 }}
                 sx={{ m: 1 }}
                 {...register("maximumAge")}
+                defaultValue="30"
               />
             </Box>
             <TextField
               fullWidth
-              // required
+              required
               id="outlined-required"
               label="Message subject"
               sx={{ m: 1 }}
@@ -166,7 +159,7 @@ const InfoForm = () => {
             />
             <TextField
               fullWidth
-              // required
+              required
               id="outlined-required"
               label="English message"
               multiline
@@ -176,7 +169,7 @@ const InfoForm = () => {
             />
             <TextField
               fullWidth
-              // required
+              required
               id="outlined-required"
               label="French message"
               multiline
@@ -184,31 +177,28 @@ const InfoForm = () => {
               sx={{ m: 1 }}
               {...register("frenchMessage")}
             />
-
-            {/* <Box sx={{ display: "flex", alignItems: "center" }}></Box> */}
           </CardContent>
           <CardActions>
             <LoadingButton
               type="submit"
               variant="contained"
-              loading={isLoading}
+              loading={isStarting}
               sx={{
                 m: 1,
               }}
-              disabled={isConnected || isRunning}
+              disabled={isRunning}
             >
               Start the bot !
             </LoadingButton>
 
             <LoadingButton
-              // type="submit"
               variant="contained"
               loading={isStopping}
               sx={{
                 m: 1,
               }}
-              disabled={isConnected || !isRunning}
-              onClick={handleClickStopBot}
+              disabled={!isRunning}
+              onClick={onStopBotClick}
             >
               Stop the bot !
             </LoadingButton>

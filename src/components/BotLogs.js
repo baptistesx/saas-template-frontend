@@ -17,39 +17,39 @@ import PropTypes from "prop-types";
 import * as React from "react";
 import { useEffect, useRef, useState } from "react";
 import socketIOClient from "socket.io-client";
+import { ENDPOINT } from "../utils/constants";
 
 // TODO: move inside the compoenent?
 let botLogsMessageSentIsFirst = true;
 let botLogsMembersScrappedIsFirst = true;
 
 const BotLogs = () => {
-  const ENDPOINT = "http://localhost:4999";
   const [socket, setSocket] = useState(null);
+  const [isSocketInitialized, setIsSocketInitialized] = useState(false);
 
   const [botLogs, setBotLogs] = useState([]);
 
-  const [isSocketInitialized, setIsSocketInitialized] = useState(false);
+  const [isClearingLogs, setIsClearingLogs] = useState(false);
 
-  const [isClearing, setIsClearing] = useState(false);
+  const [isOpenCitiesDialog, setIsOpenCitiesDialog] = React.useState(false);
+  const [fullCitySelected, setFullCitySelected] = React.useState("Dione");
+  const [cities, setCities] = useState([]);
 
-  const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState("Dione");
-  const [citiesList, setCitiesList] = useState([]);
-  const handleClickListItem = (cities) => {
-    setCitiesList(cities);
-    setOpen(true);
+  const handleOpenCitiesDialog = (citiesArray) => {
+    setCities(citiesArray);
+
+    setIsOpenCitiesDialog(true);
   };
 
-  const handleClose = async (newValue) => {
-    setOpen(false);
+  const handleCloseCitiesDialog = async (city) => {
+    setIsOpenCitiesDialog(false);
 
-    if (newValue) {
-      setValue(newValue);
-      console.log("new value: ", newValue);
-      const res = await axios.post(`http://localhost:4999/setCity`, {
-        city: newValue,
+    if (city) {
+      setFullCitySelected(city);
+
+      await axios.post(`${ENDPOINT}/setCity`, {
+        city: city,
       });
-      console.log(res);
     }
   };
 
@@ -60,8 +60,10 @@ const BotLogs = () => {
 
     if (socket !== null && !isSocketInitialized) {
       setIsSocketInitialized(true);
+
       socket.on("connection", (log) => {
         setBotLogs((b) => [...b, log]);
+
         scrollLogsDown();
       });
 
@@ -71,6 +73,7 @@ const BotLogs = () => {
         } else {
           setBotLogs((b) => [...b, log]);
         }
+
         scrollLogsDown();
       });
 
@@ -81,23 +84,23 @@ const BotLogs = () => {
         } else {
           setBotLogs((b) => [...b.slice(0, -1), log]);
         }
+
         scrollLogsDown();
       });
 
       socket.on("botLogsMembersScrapped", (log) => {
         if (botLogsMembersScrappedIsFirst) {
           setBotLogs((b) => [...b, log]);
+
           botLogsMembersScrappedIsFirst = false;
         } else {
           setBotLogs((b) => [...b.slice(0, -1), log]);
         }
+
         scrollLogsDown();
       });
 
-      socket.on("citiesList", async (cities) => {
-        console.log(cities);
-        handleClickListItem(cities);
-      });
+      socket.on("citiesList", async (cities) => handleOpenCitiesDialog(cities));
     }
   }, [
     socket,
@@ -107,15 +110,15 @@ const BotLogs = () => {
   ]);
 
   const handleClickClearConsole = async () => {
-    setIsClearing(true);
+    setIsClearingLogs(true);
 
-    const res = await axios.get(`http://localhost:4999/clearLogs`);
+    const res = await axios.get(`${ENDPOINT}/clearLogs`);
 
     if (res.status === 200) {
       setBotLogs((b) => []);
     }
 
-    setIsClearing(false);
+    setIsClearingLogs(false);
   };
 
   const scrollLogsDown = () => {
@@ -129,7 +132,7 @@ const BotLogs = () => {
       sx={{
         width: "45%",
         minWidth: "320px",
-        maxHeight: "95vh",
+        maxHeight: "80vh",
         m: 1,
         p: 1,
         display: "flex",
@@ -149,7 +152,7 @@ const BotLogs = () => {
 
       <LoadingButton
         variant="contained"
-        loading={isClearing}
+        loading={isClearingLogs}
         sx={{
           m: 1,
         }}
@@ -160,12 +163,11 @@ const BotLogs = () => {
       </LoadingButton>
 
       <CitiesFormDialog
-        id="ringtone-menu"
         keepMounted
-        open={open}
-        onClose={handleClose}
-        value={value}
-        cities={citiesList}
+        open={isOpenCitiesDialog}
+        onClose={handleCloseCitiesDialog}
+        value={fullCitySelected}
+        cities={cities}
       />
     </Card>
   );
@@ -178,7 +180,7 @@ function CitiesFormDialog(props) {
   const [value, setValue] = useState(valueProp);
   const radioGroupRef = useRef(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!open) {
       setValue(valueProp);
     }
@@ -188,10 +190,6 @@ function CitiesFormDialog(props) {
     if (radioGroupRef.current != null) {
       radioGroupRef.current.focus();
     }
-  };
-
-  const handleCancel = () => {
-    onClose();
   };
 
   const handleOk = () => {
@@ -211,12 +209,12 @@ function CitiesFormDialog(props) {
       open={open}
       {...other}
     >
-      <DialogTitle>Phone Ringtone</DialogTitle>
+      <DialogTitle>Full city name</DialogTitle>
       <DialogContent dividers>
         <RadioGroup
           ref={radioGroupRef}
-          aria-label="ringtone"
-          name="ringtone"
+          aria-label="city"
+          name="city"
           value={value}
           onChange={handleChange}
         >
@@ -231,9 +229,6 @@ function CitiesFormDialog(props) {
         </RadioGroup>
       </DialogContent>
       <DialogActions>
-        <Button autoFocus onClick={handleCancel}>
-          Cancel
-        </Button>
         <Button onClick={handleOk}>Ok</Button>
       </DialogActions>
     </Dialog>
