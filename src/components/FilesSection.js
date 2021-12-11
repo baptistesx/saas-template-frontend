@@ -2,11 +2,17 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import DownloadIcon from "@mui/icons-material/Download";
 import { LoadingButton } from "@mui/lab";
 import {
-  Box,
   Card,
   CardActions,
   CardContent,
   IconButton,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
   Typography,
 } from "@mui/material";
 import axios from "axios";
@@ -19,8 +25,6 @@ const FilesSection = () => {
   const [filesName, setFilesName] = useState([]);
 
   useEffect(async () => {
-    console.log("in useEffect");
-
     onRefreshClick();
   }, []);
 
@@ -62,17 +66,11 @@ const FilesSection = () => {
 
   return (
     <Card
-      id="logs"
       sx={{
-        minWidth: "320px",
-        maxHeight: "80vh",
         m: 1,
         p: 1,
         display: "flex",
-        flexGrow: 1,
-        justifyContent: "space-between",
-        flexDirection: "column",
-        overflow: "auto",
+        flexWrap: "wrap",
       }}
     >
       <CardContent>
@@ -81,30 +79,42 @@ const FilesSection = () => {
         {filesName.length === 0 ? (
           <Typography>No file available</Typography>
         ) : (
-          filesName.map((name) => (
-            <Box
-              key={name}
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-              }}
-            >
-              <Typography>{name}</Typography>
-              <IconButton
-                aria-label="download"
-                onClick={() => onDownloadClick(name)}
-              >
-                <DownloadIcon />
-              </IconButton>
-              <IconButton
-                aria-label="delete"
-                onClick={() => onDeleteClick(name)}
-              >
-                <DeleteIcon />
-              </IconButton>
-            </Box>
-          ))
+          <TableContainer component={Paper}>
+            <Table aria-label="files table">
+              <TableHead>
+                <TableRow>
+                  <TableCell align="left">Name</TableCell>
+                  <TableCell align="left">Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {filesName.map((name) => (
+                  <TableRow
+                    key={name}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {name}
+                    </TableCell>
+                    <TableCell align="left">
+                      <IconButton
+                        aria-label="download"
+                        onClick={() => onDownloadClick(name)}
+                      >
+                        <DownloadIcon />
+                      </IconButton>
+                      <IconButton
+                        aria-label="delete"
+                        onClick={() => onDeleteClick(name)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         )}
       </CardContent>
 
