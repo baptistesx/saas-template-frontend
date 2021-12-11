@@ -21,7 +21,6 @@ import { ENDPOINT } from "../utils/constants";
 
 // TODO: move inside the compoenent?
 let botLogsMessageSentIsFirst = true;
-let botLogsMembersScrappedIsFirst = true;
 
 const BotLogs = () => {
   const [socket, setSocket] = useState(null);
@@ -88,26 +87,9 @@ const BotLogs = () => {
         scrollLogsDown();
       });
 
-      socket.on("botLogsMembersScrapped", (log) => {
-        if (botLogsMembersScrappedIsFirst) {
-          setBotLogs((b) => [...b, log]);
-
-          botLogsMembersScrappedIsFirst = false;
-        } else {
-          setBotLogs((b) => [...b.slice(0, -1), log]);
-        }
-
-        scrollLogsDown();
-      });
-
       socket.on("citiesList", async (cities) => handleOpenCitiesDialog(cities));
     }
-  }, [
-    socket,
-    botLogsMessageSentIsFirst,
-    botLogsMembersScrappedIsFirst,
-    isSocketInitialized,
-  ]);
+  }, [socket, botLogsMessageSentIsFirst, isSocketInitialized]);
 
   const handleClickClearConsole = async () => {
     setIsClearingLogs(true);
@@ -131,7 +113,8 @@ const BotLogs = () => {
       id="logs"
       sx={{
         width: "45%",
-        minWidth: "320px",
+        minWidth: 320,
+        minHeight: 400,
         maxHeight: "80vh",
         m: 1,
         p: 1,
