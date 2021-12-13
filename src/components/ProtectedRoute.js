@@ -1,10 +1,14 @@
-import React from "react";
-import { Route } from "react-router-dom";
+import { default as React } from "react";
+import { Redirect, Route } from "react-router-dom";
 
-function ProtectedRoute({ component: Component, ...restOfProps }) {
+const ProtectedRoute = ({ component: Component, ...rest }) => {
   const isLoggedIn = localStorage.getItem("isLoggedIn");
 
-  return <Route {...restOfProps} render={(props) => isLoggedIn} />;
-}
+  return isLoggedIn ? (
+    <Route {...rest} render={(props) => <Component {...rest} {...props} />} />
+  ) : (
+    <Redirect to="/" />
+  );
+};
 
 export default ProtectedRoute;
