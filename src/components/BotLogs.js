@@ -19,7 +19,6 @@ import { useEffect, useRef, useState } from "react";
 import socketIOClient from "socket.io-client";
 import { ENDPOINT } from "../utils/constants";
 
-// TODO: move inside the compoenent?
 let botLogsMessageSentIsFirst = true;
 
 const BotLogs = () => {

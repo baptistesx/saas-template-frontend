@@ -1,22 +1,25 @@
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import { Button, Typography } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Card, CardContent, Typography } from "@mui/material";
+import React from "react";
 import CustomAppBar from "../components/CustomAppBar";
 import CustomBodyLayout from "../components/CustomBodyLayout";
+
 function Home() {
   return (
     <div>
       <CustomAppBar />
 
       <CustomBodyLayout>
-        <Typography variant="h1">Bots list</Typography>
+        <Typography variant="h1" sx={{ textAlign: "center" }}>
+          Welcome on ImLazy.dev!
+        </Typography>
 
-        <Link to="/workaway-messaging">
-          <Button variant="contained">
-            Workaway messaging
-            <ArrowForwardIcon />
-          </Button>
-        </Link>
+        <Card sx={{ p: 1 }}>
+          <CardContent>
+            <Typography variant="body">
+              You'll find here different ressources to save time in your life...
+            </Typography>
+          </CardContent>
+        </Card>
       </CustomBodyLayout>
     </div>
   );
