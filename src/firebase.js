@@ -17,6 +17,7 @@ import {
   setDoc,
   where,
 } from "firebase/firestore";
+
 import { firebaseConfig } from "./firebaseConfig";
 
 const firebaseApp = initializeApp(firebaseConfig);
