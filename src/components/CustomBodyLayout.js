@@ -9,9 +9,7 @@ const CustomBodyLayout = ({ children }) => {
       sx={{
         display: "flex",
         flexDirection: "column",
-        // justifyContent: "start",
-        alignItems: "start",
-        width: "50%",
+        alignItems: "center",
       }}
     >
       {children}
