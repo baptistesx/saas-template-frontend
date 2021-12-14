@@ -1,18 +1,21 @@
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import { Button, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import React, { useContext, useEffect } from "react";
-import { Link, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import CustomAppBar from "../components/CustomAppBar";
 import CustomBodyLayout from "../components/CustomBodyLayout";
 import userContext from "../utils/userContext";
 
 function Dashboard() {
   const history = useHistory();
-  const { setIsLoggedIn } = useContext(userContext);
+  const { setIsLoggedIn, isAdmin, setIsAdmin } = useContext(userContext);
 
   useEffect(() => {
     if (localStorage.getItem("isLoggedIn") === "true") {
       setIsLoggedIn(true);
+      if (localStorage.getItem("isAdmin") === "true") {
+        setIsAdmin(true);
+      }
     }
   });
 
@@ -23,12 +26,28 @@ function Dashboard() {
       <CustomBodyLayout>
         <Typography variant="h1">Bots list</Typography>
 
-        <Link to="/workaway-messaging">
-          <Button variant="contained">
-            Workaway messaging
+        {isAdmin ? (
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <Button
+              href="/workaway-messaging"
+              variant="contained"
+              sx={{ m: 1 }}
+            >
+              Workaway messaging
+              <ArrowForwardIcon />
+            </Button>
+
+            <Button href="/admin-panel" variant="contained" sx={{ m: 1 }}>
+              Admin panel
+              <ArrowForwardIcon />
+            </Button>
+          </Box>
+        ) : (
+          <Button href="/admin-panel" variant="contained" sx={{ m: 1 }}>
+            Get Premium Account to access bots !
             <ArrowForwardIcon />
           </Button>
-        </Link>
+        )}
       </CustomBodyLayout>
     </div>
   );

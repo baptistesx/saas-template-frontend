@@ -17,7 +17,6 @@ import {
   setDoc,
   where,
 } from "firebase/firestore";
-
 import { firebaseConfig } from "./firebaseConfig";
 
 const firebaseApp = initializeApp(firebaseConfig);
@@ -46,12 +45,18 @@ const signInWithGoogle = async () => {
 
       await setDoc(docRef, {
         email: user.email,
+        isAdmin: false,
       });
 
       docRef = doc(db, "users", user.uid);
 
       const docSnap = await getDoc(docRef);
-      return { isNewUser: true, data: docSnap.data(), id: user.uid };
+      return {
+        isNewUser: true,
+        data: docSnap.data(),
+        id: user.uid,
+        isAdmin: false,
+      };
     }
   } catch (err) {
     console.error(err);
@@ -91,6 +96,7 @@ const registerWithEmailAndPassword = async ({ email, password }) => {
 
     await setDoc(docRef, {
       email: email,
+      isAdmin: false,
     });
 
     return { data: res.user, id: res.user.uid };

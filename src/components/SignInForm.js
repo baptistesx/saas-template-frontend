@@ -41,6 +41,7 @@ const SignInForm = () => {
 
       localStorage.setItem("isLoggedIn", true);
       localStorage.setItem("email", res.data.email);
+      localStorage.setItem("isAdmin", res.data.isAdmin);
 
       history.push("/dashboard");
     }
@@ -60,6 +61,7 @@ const SignInForm = () => {
       }
       localStorage.setItem("isLoggedIn", true);
       localStorage.setItem("email", res.data.email);
+      localStorage.setItem("isAdmin", res.data.isAdmin);
       history.push("/dashboard");
     }
   };

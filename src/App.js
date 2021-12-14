@@ -3,9 +3,11 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import "./App.css";
+import AdminRoute from "./components/AdminRoute";
 import CheckedRoute from "./components/CheckedRoute";
 import ProtectedRoute from "./components/ProtectedRoute";
 import userContext from "./utils/userContext";
+import AdminPanel from "./views/AdminPanel";
 import Dashboard from "./views/Dashboard";
 import Home from "./views/Home";
 import NotFound from "./views/NotFound";
@@ -31,6 +33,7 @@ const theme = createTheme({
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [email, setEmail] = useState("");
+  const [isAdmin, setIsAdmin] = useState("");
 
   return (
     <userContext.Provider
@@ -39,6 +42,8 @@ function App() {
         setIsLoggedIn,
         email,
         setEmail,
+        isAdmin,
+        setIsAdmin,
       }}
     >
       <ThemeProvider theme={theme}>
@@ -61,6 +66,8 @@ function App() {
             />
 
             <ProtectedRoute exact path="/dashboard" component={Dashboard} />
+
+            <AdminRoute exact path="/admin-panel" component={AdminPanel} />
 
             <CheckedRoute exact path="/" component={Home} />
 

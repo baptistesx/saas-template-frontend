@@ -27,6 +27,7 @@ function CustomAppBar() {
   const onLogoutClick = async () => {
     localStorage.removeItem("email");
     localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("isAdmin");
 
     await logout();
 

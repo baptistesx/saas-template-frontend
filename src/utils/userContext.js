@@ -5,6 +5,8 @@ const userContext = createContext({
   setIsLoggedIn: (auth) => {},
   email: "",
   setEmail: (email) => {},
+  isAdmin: "",
+  setIsAdmin: (isAdmin) => {},
 });
 
 export default userContext;
