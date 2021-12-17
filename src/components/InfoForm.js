@@ -32,7 +32,7 @@ const InfoForm = () => {
   const onStartBotClick = async (data) => {
     setIsStarting(true);
 
-    const res = await axios.post(`${ENDPOINT}/startBot`, data);
+    const res = await axios.post(`${ENDPOINT}startBot`, data);
 
     if (res.status === 200) {
       setIsRunning(true);
@@ -44,7 +44,7 @@ const InfoForm = () => {
   const onStopBotClick = async () => {
     setIsStopping(true);
 
-    const res = await axios.get(`${ENDPOINT}/stopBot`);
+    const res = await axios.get(`${ENDPOINT}stopBot`);
 
     if (res.status === 200) {
       setIsRunning(false);

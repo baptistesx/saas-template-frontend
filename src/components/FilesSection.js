@@ -31,14 +31,14 @@ const FilesSection = () => {
   const onRefreshClick = async () => {
     console.log("in onRefreshClick");
     setIsRefreshing(true);
-    const res = await axios.get(`${ENDPOINT}/filesName`);
+    const res = await axios.get(`${ENDPOINT}filesName`);
     setFilesName([...res.data]);
     setIsRefreshing(false);
   };
 
   const onDownloadClick = async (name) => {
     console.log("download", name);
-    const res = await axios.get(`${ENDPOINT}/file`, { params: { name } });
+    const res = await axios.get(`${ENDPOINT}file`, { params: { name } });
     console.log(JSON.parse(res.data));
 
     // Create a blob with the data we want to download as a file
@@ -59,7 +59,7 @@ const FilesSection = () => {
 
   const onDeleteClick = async (name) => {
     console.log("delete", name);
-    const res = await axios.delete(`${ENDPOINT}/file`, { params: { name } });
+    const res = await axios.delete(`${ENDPOINT}file`, { params: { name } });
 
     onRefreshClick();
   };

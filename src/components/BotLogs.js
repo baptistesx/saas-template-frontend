@@ -45,7 +45,7 @@ const BotLogs = () => {
     if (city) {
       setFullCitySelected(city);
 
-      await axios.post(`${ENDPOINT}/setCity`, {
+      await axios.post(`${ENDPOINT}setCity`, {
         city: city,
       });
     }
@@ -93,7 +93,7 @@ const BotLogs = () => {
   const handleClickClearConsole = async () => {
     setIsClearingLogs(true);
 
-    const res = await axios.get(`${ENDPOINT}/clearLogs`);
+    const res = await axios.get(`${ENDPOINT}clearLogs`);
 
     if (res.status === 200) {
       setBotLogs((b) => []);
