@@ -18,6 +18,7 @@ const SignInForm = () => {
   const [isLoggingWithEmailAndPassword, setIsLoggingWithEmailAndPassword] =
     useState(false);
   const history = useHistory();
+
   const {
     register,
     handleSubmit,
@@ -27,7 +28,11 @@ const SignInForm = () => {
   } = useForm();
 
   const onSignInClick = async (data) => {
+    setIsLoggingWithEmailAndPassword(true);
+
     const res = await loginWithEmailAndPassword(data);
+
+    setIsLoggingWithEmailAndPassword(false);
 
     if (res.error) {
       console.error(res.message);
@@ -48,7 +53,10 @@ const SignInForm = () => {
   };
 
   const onSignInWithGoogleClick = async () => {
+    setIsLoggingWithGoogle(true);
     const res = await signInWithGoogle();
+
+    setIsLoggingWithGoogle(false);
 
     if (res.error) {
       console.error(res.message);

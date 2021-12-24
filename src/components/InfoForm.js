@@ -30,6 +30,7 @@ const InfoForm = () => {
   } = useForm();
 
   const onStartBotClick = async (data) => {
+    console.log(data);
     setIsStarting(true);
 
     const res = await axios.post(`${ENDPOINT}startBot`, data);
