@@ -10,9 +10,9 @@ import { Box, useTheme } from "@mui/system";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
-import { loginWithEmailAndPassword, signInWithGoogle } from "../firebase";
+import { signInWithGoogle } from "../firebase";
 
-const SignInForm = () => {
+const SignInForm = ({ onClick, error }) => {
   const theme = useTheme();
   const [isLoggingWithGoogle, setIsLoggingWithGoogle] = useState(false);
   const [isLoggingWithEmailAndPassword, setIsLoggingWithEmailAndPassword] =
@@ -29,27 +29,27 @@ const SignInForm = () => {
 
   const onSignInClick = async (data) => {
     setIsLoggingWithEmailAndPassword(true);
+    onClick(data.email, data.password);
+    // const res = await loginWithEmailAndPassword(data);
 
-    const res = await loginWithEmailAndPassword(data);
+    // setIsLoggingWithEmailAndPassword(false);
 
-    setIsLoggingWithEmailAndPassword(false);
+    // if (res.error) {
+    //   console.error(res.message);
+    //   alert(res.message);
+    // } else {
+    //   if (res.isNewUser) {
+    //     alert("Welcome newbie!");
+    //   } else if (!res.isNewUser) {
+    //     alert("Welcome back!");
+    //   }
+    //   console.log("usssseeerr id", res.id);
+    //   localStorage.setItem("userId", res.id);
+    //   // localStorage.setItem("email", res.data.email);
+    //   // localStorage.setItem("isAdmin", res.data.isAdmin);
 
-    if (res.error) {
-      console.error(res.message);
-      alert(res.message);
-    } else {
-      if (res.isNewUser) {
-        alert("Welcome newbie!");
-      } else if (!res.isNewUser) {
-        alert("Welcome back!");
-      }
-
-      localStorage.setItem("isLoggedIn", true);
-      localStorage.setItem("email", res.data.email);
-      localStorage.setItem("isAdmin", res.data.isAdmin);
-
-      history.push("/dashboard");
-    }
+    //   history.push("/dashboard");
+    // }
   };
 
   const onSignInWithGoogleClick = async () => {
@@ -76,7 +76,7 @@ const SignInForm = () => {
 
   return (
     <Box sx={{ width: "45%", minWidth: "320px", m: 1 }}>
-      <form onSubmit={handleSubmit(onSignInClick)}>
+      <form onSubmit={onSignInClick}>
         <Card sx={{ p: 1 }}>
           <CardContent>
             <TextField

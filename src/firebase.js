@@ -4,6 +4,7 @@ import {
   deleteUser,
   getAuth,
   GoogleAuthProvider,
+  sendEmailVerification,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
@@ -84,7 +85,7 @@ const loginWithEmailAndPassword = async ({ email, password }) => {
       return { error: true, message: "This user doesn't exist" };
     }
   } catch (error) {
-    console.error(error.code);
+    console.error("tttt", error.code);
     return { error: error.code, message: "This user doesn't exist" };
   }
 };
@@ -99,6 +100,9 @@ const registerWithEmailAndPassword = async ({ email, password }) => {
       email: email,
       isAdmin: false,
     });
+    console.log("auth.currentUser", auth.currentUser);
+    // Send Email Verification and redirect to my website.
+    await sendEmailVerification(auth.currentUser);
 
     return { data: res.user, id: res.user.uid };
   } catch (err) {

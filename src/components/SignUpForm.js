@@ -78,7 +78,7 @@ const SignUpForm = () => {
                 m: 1,
               }}
             >
-              Sign in
+              Sign up
             </LoadingButton>
 
             <Button

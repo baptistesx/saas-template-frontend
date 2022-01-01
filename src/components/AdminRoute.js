@@ -1,11 +1,16 @@
+import { doc } from "firebase/firestore";
 import { default as React } from "react";
 import { Redirect, Route } from "react-router-dom";
+import { useFirestore, useFirestoreDocData, useSigninCheck } from "reactfire";
 
 const AdminRoute = ({ component: Component, ...rest }) => {
-  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-  const isAdmin = localStorage.getItem("isAdmin") === "true";
+  const { data: signInCheckResult } = useSigninCheck();
 
-  return isLoggedIn && isAdmin ? (
+  const userRef = doc(useFirestore(), "users", signInCheckResult.user.uid);
+
+  const { data: userProfile } = useFirestoreDocData(userRef);
+
+  return signInCheckResult.isLoggedIn && userProfile.isAdmin ? (
     <Route {...rest} render={(props) => <Component {...rest} {...props} />} />
   ) : (
     <Redirect to="/*" />

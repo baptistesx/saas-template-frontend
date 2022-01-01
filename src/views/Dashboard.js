@@ -1,23 +1,21 @@
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { Box, Button, Typography } from "@mui/material";
-import React, { useContext, useEffect } from "react";
+import { doc } from "firebase/firestore";
+import React, { useContext } from "react";
 import { useHistory } from "react-router-dom";
+import { useFirestore, useFirestoreDocData, useUser } from "reactfire";
 import CustomAppBar from "../components/CustomAppBar";
 import CustomBodyLayout from "../components/CustomBodyLayout";
 import userContext from "../utils/userContext";
-
 function Dashboard() {
-  const history = useHistory();
-  const { setIsLoggedIn, isAdmin, setIsAdmin } = useContext(userContext);
+  const { status, data: user } = useUser();
+  console.log("user", user);
 
-  useEffect(() => {
-    if (localStorage.getItem("isLoggedIn") === "true") {
-      setIsLoggedIn(true);
-      if (localStorage.getItem("isAdmin") === "true") {
-        setIsAdmin(true);
-      }
-    }
-  });
+  const uid = localStorage.getItem("userId");
+  console.log("uiiiiid", uid);
+  const userRef = doc(useFirestore(), "users", uid);
+
+  const { data: userProfile } = useFirestoreDocData(userRef);
 
   return (
     <div>
@@ -26,7 +24,7 @@ function Dashboard() {
       <CustomBodyLayout>
         <Typography variant="h1">Bots list</Typography>
 
-        {isAdmin ? (
+        {userProfile?.isAdmin ? (
           <Box sx={{ display: "flex", flexDirection: "column" }}>
             <Button
               href="/workaway-messaging"
@@ -47,6 +45,13 @@ function Dashboard() {
             Get Premium Account to access bots !
             <ArrowForwardIcon />
           </Button>
+        )}
+        {!user.emailVerified ? (
+          <Typography>
+            Pense à vérifier ton compte via le lien dans l'email de confirmation
+          </Typography>
+        ) : (
+          ""
         )}
       </CustomBodyLayout>
     </div>

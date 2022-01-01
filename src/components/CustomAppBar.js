@@ -1,34 +1,40 @@
 import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material/";
-import React, { useContext, useEffect } from "react";
+import { doc } from "firebase/firestore";
+import React from "react";
 import { useHistory } from "react-router-dom";
+import {
+  useFirestore,
+  useFirestoreDocData,
+  useSigninCheck,
+  useUser,
+} from "reactfire";
 import { logout } from "../firebase";
-import userContext from "../utils/userContext";
+
+function UserBloc() {
+  const { status, data: user } = useUser();
+  const burritoRef = doc(useFirestore(), "users", user.uid);
+  const { status: stat, data: userEl } = useFirestoreDocData(burritoRef);
+  return (
+    <Typography>{`${userEl?.isAdmin ? "Admin" : "Non admin"} ${
+      userEl?.email
+    }`}</Typography>
+  );
+}
 
 function CustomAppBar() {
-  const { setIsLoggedIn, isLoggedIn, email, setEmail } =
-    useContext(userContext);
   const history = useHistory();
 
-  useEffect(() => {
-    if (localStorage.getItem("isLoggedIn")) {
-      setIsLoggedIn(true);
-      setEmail(localStorage.getItem("email"));
-    }
-  });
+  const { data: signInCheckResult } = useSigninCheck();
+
+  // const userRef = doc(useFirestore(), "users", signInCheckResult.user.uid);
+
+  // const { data: userProfile } = useFirestoreDocData(userRef);
 
   const handleLogoClick = () => {
-    if (!isLoggedIn) {
-      history.push("/");
-    } else {
-      history.push("/dashboard");
-    }
+    history.push("/dashboard");
   };
 
   const onLogoutClick = async () => {
-    localStorage.removeItem("email");
-    localStorage.removeItem("isLoggedIn");
-    localStorage.removeItem("isAdmin");
-
     await logout();
 
     history.push("/");
@@ -42,13 +48,13 @@ function CustomAppBar() {
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
           <Button onClick={handleLogoClick} style={{ textDecoration: "none" }}>
             <Typography variant="h6" component="div" sx={{ color: "white" }}>
-              Bots Dashboard
+              Im-Lazy
             </Typography>
           </Button>
 
-          {isLoggedIn ? (
+          {signInCheckResult?.signedIn ? (
             <Box sx={{ display: "flex", alignItems: "center" }}>
-              <Typography>{email}</Typography>
+              <UserBloc />
 
               <Typography>|</Typography>
 

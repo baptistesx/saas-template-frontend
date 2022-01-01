@@ -1,16 +1,14 @@
 import React from "react";
 import { Redirect, Route } from "react-router-dom";
+import { useSigninCheck } from "reactfire";
 
-function CheckedRoute({ component: Component, ...restOfProps }) {
-  const isLoggedIn = localStorage.getItem("isLoggedIn");
+function CheckedRoute({ component: Component, ...rest }) {
+  const { status, data: signInCheckResult } = useSigninCheck();
 
-  return (
-    <Route
-      {...restOfProps}
-      render={(props) =>
-        isLoggedIn ? <Redirect to="/dashboard" /> : <Component {...props} />
-      }
-    />
+  return signInCheckResult?.signedIn ? (
+    <Redirect to="/dashboard" />
+  ) : (
+    <Route {...rest} render={(props) => <Component {...rest} {...props} />} />
   );
 }
 
