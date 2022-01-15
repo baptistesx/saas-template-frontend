@@ -11,7 +11,7 @@ function Dashboard() {
   const { status, data: user } = useUser();
   console.log("user", user);
 
-  const uid = localStorage.getItem("userId");
+  const uid = JSON.parse(localStorage.getItem("user")).id;
   console.log("uiiiiid", uid);
   const userRef = doc(useFirestore(), "users", uid);
 

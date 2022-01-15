@@ -1,10 +1,6 @@
-import { initializeApp } from "firebase/app";
 import {
   createUserWithEmailAndPassword,
   deleteUser,
-  getAuth,
-  GoogleAuthProvider,
-  sendEmailVerification,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
@@ -14,19 +10,12 @@ import {
   doc,
   getDoc,
   getDocs,
-  getFirestore,
   query,
   setDoc,
   where,
 } from "firebase/firestore";
-import { firebaseConfig } from "./firebaseConfig";
 
-const firebaseApp = initializeApp(firebaseConfig);
-const provider = new GoogleAuthProvider();
-const auth = getAuth();
-const db = getFirestore(firebaseApp);
-
-const signInWithGoogle = async () => {
+const signInWithGoogle = async (auth, db, provider) => {
   try {
     // Auth with google account
     const res = await signInWithPopup(auth, provider);
@@ -66,7 +55,7 @@ const signInWithGoogle = async () => {
   }
 };
 
-const loginWithEmailAndPassword = async ({ email, password }) => {
+const loginWithEmailAndPassword = async ({ auth, db, email, password }) => {
   try {
     await signInWithEmailAndPassword(auth, email, password);
 
@@ -76,6 +65,14 @@ const loginWithEmailAndPassword = async ({ email, password }) => {
     const querySnapshot = await getDocs(q);
 
     if (querySnapshot.docs.length > 0) {
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          isNewUser: false,
+          ...querySnapshot.docs[0].data(),
+          id: querySnapshot.docs[0].id,
+        })
+      );
       return {
         isNewUser: false,
         data: querySnapshot.docs[0].data(),
@@ -90,7 +87,7 @@ const loginWithEmailAndPassword = async ({ email, password }) => {
   }
 };
 
-const registerWithEmailAndPassword = async ({ email, password }) => {
+const registerWithEmailAndPassword = async ({ auth, db, email, password }) => {
   try {
     const res = await createUserWithEmailAndPassword(auth, email, password);
 
@@ -101,18 +98,24 @@ const registerWithEmailAndPassword = async ({ email, password }) => {
       isAdmin: false,
     });
     console.log("auth.currentUser", auth.currentUser);
+    localStorage.setItem(
+      "user",
+      JSON.stringify({ ...res.user, id: res.user.uid })
+    );
+
     // Send Email Verification and redirect to my website.
-    await sendEmailVerification(auth.currentUser);
+    //await sendEmailVerification(auth.currentUser);
 
     return { data: res.user, id: res.user.uid };
   } catch (err) {
     console.error(err);
-    alert(err.message);
+    return { error: err.code, message: err.message };
+
   }
 };
 
 //TODO: to implement on the frontend
-const sendPasswordResetEmail = async (email) => {
+const sendPasswordResetEmail = async (auth, email) => {
   try {
     await auth.sendPasswordResetEmail(email);
     alert("Password reset link sent!");
@@ -122,11 +125,11 @@ const sendPasswordResetEmail = async (email) => {
   }
 };
 
-const logout = () => {
+const logout = (auth) => {
   signOut(auth);
 };
 
-const getUsers = async () => {
+const getUsers = async (db) => {
   try {
     // Check if user already registered
     // const q = query(collection(db, "users"));
@@ -152,7 +155,7 @@ const getUsers = async () => {
   }
 };
 
-const deleteUserById = async (id) => {
+const deleteUserById = async (db, id) => {
   try {
     // await deleteDoc(doc(db, "users", id));
     // Check if user already registered
@@ -170,7 +173,7 @@ const deleteUserById = async (id) => {
   }
 };
 
-const toggleAdminRights = async (id, isAdmin) => {
+const toggleAdminRights = async (db, id, isAdmin) => {
   try {
     let docRef = doc(db, "users", id);
 
@@ -188,9 +191,6 @@ const toggleAdminRights = async (id, isAdmin) => {
 };
 
 export {
-  auth,
-  db,
-  provider,
   signInWithGoogle,
   loginWithEmailAndPassword,
   registerWithEmailAndPassword,

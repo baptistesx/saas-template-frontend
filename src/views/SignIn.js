@@ -11,13 +11,15 @@ import {
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
+import { useAuth, useFirestore } from "reactfire";
 import CustomAppBar from "../components/CustomAppBar";
-import { signInWithGoogle } from "../firebase";
+import { loginWithEmailAndPassword, signInWithGoogle } from "../firebase";
 
-function SignIn({ onClick, error }) {
+function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const auth = useAuth();
+  const db = useFirestore();
   const [isLoggingWithGoogle, setIsLoggingWithGoogle] = useState(false);
   const [isLoggingWithEmailAndPassword, setIsLoggingWithEmailAndPassword] =
     useState(false);
@@ -36,29 +38,26 @@ function SignIn({ onClick, error }) {
 
     setIsLoggingWithEmailAndPassword(true);
 
-    onClick(email, password).then((res) => {
-      console.log(res);
-
-      setIsLoggingWithEmailAndPassword(false);
-    });
+    const res = await loginWithEmailAndPassword({ auth, db, email, password });
+    setIsLoggingWithEmailAndPassword(false);
     // const res = await loginWithEmailAndPassword(data);
 
-    // if (res.error) {
-    //   console.error(res.message);
-    //   alert(res.message);
-    // } else {
-    //   if (res.isNewUser) {
-    //     alert("Welcome newbie!");
-    //   } else if (!res.isNewUser) {
-    //     alert("Welcome back!");
-    //   }
-    //   console.log("usssseeerr id", res.id);
-    //   localStorage.setItem("userId", res.id);
-    //   // localStorage.setItem("email", res.data.email);
-    //   // localStorage.setItem("isAdmin", res.data.isAdmin);
+    if (res.error) {
+      console.error(res.message);
+      alert(res.message);
+    } else {
+      if (res.isNewUser) {
+        alert("Welcome newbie!");
+      } else if (!res.isNewUser) {
+        alert("Welcome back!");
+      }
+      console.log("usssseeerr id", res.id);
+      localStorage.setItem("userId", res.id);
+      // localStorage.setItem("email", res.data.email);
+      // localStorage.setItem("isAdmin", res.data.isAdmin);
 
-    //   history.push("/dashboard");
-    // }
+      history.push("/dashboard");
+    }
   };
 
   const onSignInWithGoogleClick = async () => {

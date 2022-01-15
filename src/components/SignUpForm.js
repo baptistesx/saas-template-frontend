@@ -10,13 +10,15 @@ import { Box, useTheme } from "@mui/system";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
+import { useAuth, useFirestore } from "reactfire";
 import { registerWithEmailAndPassword } from "../firebase";
 
 const SignUpForm = () => {
   const theme = useTheme();
   const [isSigningUp, setIsSigningUp] = useState(false);
   const history = useHistory();
-
+  const auth = useAuth();
+  const db = useFirestore();
   const {
     register,
     handleSubmit,
@@ -27,15 +29,14 @@ const SignUpForm = () => {
 
   const onRegisterClick = async (data) => {
     console.log(data);
-
-    const res = await registerWithEmailAndPassword(data);
-
-    if (res.error) {
+    setIsSigningUp(true);
+    const res = await registerWithEmailAndPassword({ auth, db, ...data });
+    setIsSigningUp(false);
+    if (res?.error) {
       console.error(res.message);
       alert(res.message);
     } else {
       alert("Welcome newbie!");
-
       history.push("/dashboard");
     }
   };

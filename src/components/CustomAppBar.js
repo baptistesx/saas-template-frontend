@@ -7,6 +7,7 @@ import {
   useFirestoreDocData,
   useSigninCheck,
   useUser,
+  useAuth,
 } from "reactfire";
 import { logout } from "../firebase";
 
@@ -23,7 +24,7 @@ function UserBloc() {
 
 function CustomAppBar() {
   const history = useHistory();
-
+  const auth = useAuth();
   const { data: signInCheckResult } = useSigninCheck();
 
   // const userRef = doc(useFirestore(), "users", signInCheckResult.user.uid);
@@ -31,11 +32,11 @@ function CustomAppBar() {
   // const { data: userProfile } = useFirestoreDocData(userRef);
 
   const handleLogoClick = () => {
-    history.push("/dashboard");
+    history.push("/");
   };
 
   const onLogoutClick = async () => {
-    await logout();
+    await logout(auth);
 
     history.push("/");
 
