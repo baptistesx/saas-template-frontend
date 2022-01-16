@@ -19,6 +19,10 @@ const InfoForm = () => {
   const [isStarting, setIsStarting] = useState(false);
   const [isStopping, setIsStopping] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
+
+  const [isDevMode, setIsDevMode] = useState(
+    process.env?.REACT_APP_DEV_MODE === "TRUE"
+  );
   const theme = useTheme();
 
   const {
@@ -30,10 +34,18 @@ const InfoForm = () => {
   } = useForm();
 
   const onStartBotClick = async (data) => {
-    console.log(data);
-    setIsStarting(true);
+    if (process.env?.REACT_APP_DEV_MODE !== "TRUE") {
+      data = { ...data, headless: true, developmentMode: false };
+    } else {
+      data = { ...data, developmentMode: data.developmentMode === "true" };
+    }
 
-    const res = await axios.post(`${ENDPOINT}startBot`, data);
+    setIsStarting(true);
+    console.log(data);
+    const res = await axios.post(`${ENDPOINT}startBot`, {
+      ...data,
+      developmentMode: data,
+    });
 
     if (res.status === 200) {
       setIsRunning(true);
@@ -61,18 +73,25 @@ const InfoForm = () => {
           <CardContent>
             <Typography variant="h2">Info</Typography>
 
-            <FormControlLabel
-              control={<Checkbox defaultChecked />}
-              label="Dev mode (don't send messages)"
-              {...register("developmentMode")}
-              sx={{ m: 1 }}
-            />
-            <FormControlLabel
-              control={<Checkbox defaultChecked />}
-              label="Headless"
-              {...register("headless")}
-              sx={{ m: 1 }}
-            />
+            {process.env?.REACT_APP_DEV_MODE === "TRUE" ? (
+              <>
+                <FormControlLabel
+                  control={<Checkbox defaultChecked />}
+                  label="Dev mode (don't send messages)"
+                  {...register("developmentMode")}
+                  sx={{ m: 1 }}
+                  value
+                />
+                <FormControlLabel
+                  control={<Checkbox defaultChecked />}
+                  label="Headless"
+                  {...register("headless")}
+                  sx={{ m: 1 }}
+                />
+              </>
+            ) : (
+              <Box />
+            )}
             <TextField
               fullWidth
               placeholder="Email"

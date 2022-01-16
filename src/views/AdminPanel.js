@@ -25,10 +25,12 @@ import { useEffect, useState } from "react";
 import CustomAppBar from "../components/CustomAppBar";
 import CustomBodyLayout from "../components/CustomBodyLayout";
 import { deleteUserById, getUsers, toggleAdminRights } from "../firebase";
+import {useFirestore} from "reactfire"
 
 function AdminPanel() {
   const [isLoading, setIsLoading] = useState(true);
   const [users, setUsers] = useState([]);
+  const db = useFirestore(); // a parent component contains a `FirebaseAppProvider`
 
   useEffect(async () => {
     onRefreshClick();
@@ -37,9 +39,15 @@ function AdminPanel() {
   const onRefreshClick = async () => {
     setIsLoading(true);
 
-    const res = await getUsers();
-    console.log(res);
-    setUsers([...res]);
+    const res = await getUsers(db);
+    if(res?.error){
+      setUsers([]);
+
+    }
+    else{
+
+      setUsers([...res]);
+    }
     setIsLoading(false);
   };
 
@@ -52,7 +60,7 @@ function AdminPanel() {
     setIsLoading(false);
   };
 
-  const onTggleAdminRightsClick = async (userId, isAdmin) => {
+  const onToggleAdminRightsClick = async (userId, isAdmin) => {
     const res = await toggleAdminRights(userId, isAdmin);
 
     if (res.error) {
@@ -131,7 +139,7 @@ function AdminPanel() {
                                   <IconButton
                                     aria-label="remove-moderator"
                                     onClick={() =>
-                                      onTggleAdminRightsClick(
+                                      onToggleAdminRightsClick(
                                         user.id,
                                         user.isAdmin
                                       )
@@ -149,7 +157,7 @@ function AdminPanel() {
                                   <IconButton
                                     aria-label="add-moderator"
                                     onClick={() =>
-                                      onTggleAdminRightsClick(
+                                      onToggleAdminRightsClick(
                                         user.id,
                                         user.isAdmin
                                       )

@@ -9,7 +9,7 @@ import { AuthProvider, FirestoreProvider, useFirebaseApp } from "reactfire";
 import "./App.css";
 import AdminRoute from "./components/AdminRoute";
 import CheckedRoute from "./components/CheckedRoute";
-import ProtectedRoute from "./components/ProtectedRoute";
+import PremiumRoute from "./components/PremiumRoute";
 import AdminPanel from "./views/AdminPanel";
 import Dashboard from "./views/Dashboard";
 import Home from "./views/Home";
@@ -44,7 +44,7 @@ function App() {
         <ThemeProvider theme={theme}>
           <Router>
             <Switch>
-              <ProtectedRoute
+              <PremiumRoute
                 exact
                 path="/workaway-messaging"
                 component={WorkawayMessaging}
@@ -53,13 +53,7 @@ function App() {
               <Route exact path="/signup" component={SignUp} />
               <Route exact path="/signin" component={SignIn} />
 
-              <Route
-                exact
-                path="/"
-                render={(props) => <Home />}
-                // element={}
-                // element={<SignIn onClick={test} error={error} />}
-              />
+              <Route exact path="/" component={Home} />
 
               <CheckedRoute
                 exact

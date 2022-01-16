@@ -3,17 +3,17 @@ import { doc } from "firebase/firestore";
 import React from "react";
 import { useHistory } from "react-router-dom";
 import {
+  useAuth,
   useFirestore,
   useFirestoreDocData,
   useSigninCheck,
-  useUser,
-  useAuth,
+  useUser
 } from "reactfire";
 import { logout } from "../firebase";
 
 function UserBloc() {
   const { status, data: user } = useUser();
-  const burritoRef = doc(useFirestore(), "users", user.uid);
+  const burritoRef = doc(useFirestore(), "users", user?.uid);
   const { status: stat, data: userEl } = useFirestoreDocData(burritoRef);
   return (
     <Typography>{`${userEl?.isAdmin ? "Admin" : "Non admin"} ${
@@ -32,15 +32,16 @@ function CustomAppBar() {
   // const { data: userProfile } = useFirestoreDocData(userRef);
 
   const handleLogoClick = () => {
-    history.push("/");
+    if (!signInCheckResult?.signedIn) {
+      history.push("/");
+    }
+    else{history.push("/dashboard");}
   };
 
   const onLogoutClick = async () => {
     await logout(auth);
 
     history.push("/");
-
-    window.location.reload();
   };
 
   return (

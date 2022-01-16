@@ -88,7 +88,7 @@ const SignUpForm = () => {
               }}
               href="/signin"
             >
-              I already have an account
+              I already have an account (or Google account)
             </Button>
           </CardActions>
         </Card>

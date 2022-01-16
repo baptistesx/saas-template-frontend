@@ -14,9 +14,15 @@ function NotFound() {
       <CustomBodyLayout>
         <Typography variant="h1">Error 404</Typography>
 
-        <Button variant="contained" href="/">
-          Back home
-        </Button>
+        {!signInCheckResult?.signedIn ? (
+          <Button variant="contained" href="/">
+            Back home
+          </Button>
+        ) : (
+          <Button variant="contained" href="/dashboard">
+            Back home
+          </Button>
+        )}
       </CustomBodyLayout>
     </div>
   );

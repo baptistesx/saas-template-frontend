@@ -1,22 +1,20 @@
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { Box, Button, Typography } from "@mui/material";
 import { doc } from "firebase/firestore";
-import React, { useContext } from "react";
-import { useHistory } from "react-router-dom";
+import React from "react";
 import { useFirestore, useFirestoreDocData, useUser } from "reactfire";
 import CustomAppBar from "../components/CustomAppBar";
 import CustomBodyLayout from "../components/CustomBodyLayout";
-import userContext from "../utils/userContext";
 function Dashboard() {
   const { status, data: user } = useUser();
-  console.log("user", user);
+  // console.log("user", user);
 
   const uid = JSON.parse(localStorage.getItem("user")).id;
   console.log("uiiiiid", uid);
   const userRef = doc(useFirestore(), "users", uid);
 
   const { data: userProfile } = useFirestoreDocData(userRef);
-
+// const userProfile = JSON.parse(localStorage.getItem("user"))
   return (
     <div>
       <CustomAppBar />
@@ -24,7 +22,7 @@ function Dashboard() {
       <CustomBodyLayout>
         <Typography variant="h1">Bots list</Typography>
 
-        {userProfile?.isAdmin ? (
+        {userProfile?.isPremium ? (
           <Box sx={{ display: "flex", flexDirection: "column" }}>
             <Button
               href="/workaway-messaging"
@@ -34,19 +32,23 @@ function Dashboard() {
               Workaway messaging
               <ArrowForwardIcon />
             </Button>
-
+          </Box>
+        ) : (
+          <Button href="/get-licence" variant="contained" sx={{ m: 1 }}>
+            Get Premium Account to access bots !
+            <ArrowForwardIcon />
+          </Button>
+        )}
+        {userProfile?.isAdmin ? (
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
             <Button href="/admin-panel" variant="contained" sx={{ m: 1 }}>
               Admin panel
               <ArrowForwardIcon />
             </Button>
           </Box>
-        ) : (
-          <Button href="/admin-panel" variant="contained" sx={{ m: 1 }}>
-            Get Premium Account to access bots !
-            <ArrowForwardIcon />
-          </Button>
+        ) : (<Box />
         )}
-        {!user.emailVerified ? (
+        {!user?.emailVerified ? (
           <Typography>
             Pense à vérifier ton compte via le lien dans l'email de confirmation
           </Typography>

@@ -10,10 +10,13 @@ import { Box, useTheme } from "@mui/system";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
-import { signInWithGoogle } from "../firebase";
-
-const SignInForm = ({ onClick, error }) => {
-  const theme = useTheme();
+import { useAuth, useFirestore } from "reactfire";
+import { loginWithEmailAndPassword, signInWithGoogle } from "../firebase";
+function SignInForm() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const auth = useAuth();
+  const db = useFirestore();
   const [isLoggingWithGoogle, setIsLoggingWithGoogle] = useState(false);
   const [isLoggingWithEmailAndPassword, setIsLoggingWithEmailAndPassword] =
     useState(false);
@@ -28,33 +31,35 @@ const SignInForm = ({ onClick, error }) => {
   } = useForm();
 
   const onSignInClick = async (data) => {
+    data.preventDefault();
+
     setIsLoggingWithEmailAndPassword(true);
-    onClick(data.email, data.password);
+
+    const res = await loginWithEmailAndPassword({ auth, db, email, password });
+    setIsLoggingWithEmailAndPassword(false);
     // const res = await loginWithEmailAndPassword(data);
 
-    // setIsLoggingWithEmailAndPassword(false);
+    if (res.error) {
+      console.error(res.message);
+      alert(res.message);
+    } else {
+      if (res.isNewUser) {
+        alert("Welcome newbie!");
+      } else if (!res.isNewUser) {
+        alert("Welcome back!");
+      }
 
-    // if (res.error) {
-    //   console.error(res.message);
-    //   alert(res.message);
-    // } else {
-    //   if (res.isNewUser) {
-    //     alert("Welcome newbie!");
-    //   } else if (!res.isNewUser) {
-    //     alert("Welcome back!");
-    //   }
-    //   console.log("usssseeerr id", res.id);
-    //   localStorage.setItem("userId", res.id);
-    //   // localStorage.setItem("email", res.data.email);
-    //   // localStorage.setItem("isAdmin", res.data.isAdmin);
+      // localStorage.setItem("userId", res.id);
+      // localStorage.setItem("email", res.data.email);
+      // localStorage.setItem("isAdmin", res.data.isAdmin);
 
-    //   history.push("/dashboard");
-    // }
+      history.push("/dashboard");
+    }
   };
 
   const onSignInWithGoogleClick = async () => {
     setIsLoggingWithGoogle(true);
-    const res = await signInWithGoogle();
+    const res = await signInWithGoogle({ auth, db });
 
     setIsLoggingWithGoogle(false);
 
@@ -67,9 +72,9 @@ const SignInForm = ({ onClick, error }) => {
       } else if (!res.isNewUser) {
         alert("Welcome back!");
       }
-      localStorage.setItem("isLoggedIn", true);
-      localStorage.setItem("email", res.data.email);
-      localStorage.setItem("isAdmin", res.data.isAdmin);
+      // localStorage.setItem("isLoggedIn", true);
+      // localStorage.setItem("email", res.data.email);
+      // localStorage.setItem("isAdmin", res.data.isAdmin);
       history.push("/dashboard");
     }
   };
@@ -85,6 +90,9 @@ const SignInForm = ({ onClick, error }) => {
               {...register("email")}
               required
               sx={{ m: 1 }}
+              onChange={(event) => {
+                setEmail(event.target.value);
+              }}
             />
             <TextField
               fullWidth
@@ -93,6 +101,9 @@ const SignInForm = ({ onClick, error }) => {
               {...register("password")}
               required
               sx={{ m: 1 }}
+              onChange={(event) => {
+                setPassword(event.target.value);
+              }}
             />
           </CardContent>
           <CardActions>
@@ -131,6 +142,6 @@ const SignInForm = ({ onClick, error }) => {
       </form>
     </Box>
   );
-};
+}
 
 export default SignInForm;

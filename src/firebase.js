@@ -1,6 +1,7 @@
 import {
   createUserWithEmailAndPassword,
   deleteUser,
+  GoogleAuthProvider,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
@@ -14,8 +15,8 @@ import {
   setDoc,
   where,
 } from "firebase/firestore";
-
-const signInWithGoogle = async (auth, db, provider) => {
+const provider = new GoogleAuthProvider();
+const signInWithGoogle = async ({auth, db}) => {
   try {
     // Auth with google account
     const res = await signInWithPopup(auth, provider);
@@ -29,6 +30,14 @@ const signInWithGoogle = async (auth, db, provider) => {
 
     if (docSnap.exists()) {
       // User already registered
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          isNewUser: false,
+          ...docSnap.data(),
+          id: user.uid
+        })
+      );
       return { isNewUser: false, data: docSnap.data(), id: user.uid };
     } else {
       // Create new user
@@ -37,16 +46,24 @@ const signInWithGoogle = async (auth, db, provider) => {
       await setDoc(docRef, {
         email: user.email,
         isAdmin: false,
+        isPremium:false
       });
 
-      docRef = doc(db, "users", user.uid);
 
-      const docSnap = await getDoc(docRef);
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          isNewUser: true,
+          ...docSnap.data(),
+          id: user.uid,
+        })
+      );
       return {
         isNewUser: true,
         data: docSnap.data(),
         id: user.uid,
-        isAdmin: false,
+        isAdmin: false,        isPremium:false
+
       };
     }
   } catch (err) {
@@ -95,7 +112,8 @@ const registerWithEmailAndPassword = async ({ auth, db, email, password }) => {
 
     await setDoc(docRef, {
       email: email,
-      isAdmin: false,
+      isAdmin: false,        isPremium:false
+
     });
     console.log("auth.currentUser", auth.currentUser);
     localStorage.setItem(
@@ -110,7 +128,6 @@ const registerWithEmailAndPassword = async ({ auth, db, email, password }) => {
   } catch (err) {
     console.error(err);
     return { error: err.code, message: err.message };
-
   }
 };
 
@@ -131,10 +148,17 @@ const logout = (auth) => {
 
 const getUsers = async (db) => {
   try {
+    console.log("before");
     // Check if user already registered
-    // const q = query(collection(db, "users"));
+    const q = query(collection(db, "users"));
+    const querySnapshot = await getDocs(q);
+    console.log("after");
 
-    const querySnapshot = await getDocs(collection(db, "users"));
+    // querySnapshot.forEach((doc) => {
+    //   // doc.data() is never undefined for query doc snapshots
+    //   console.log(doc.id, " => ", doc.data());
+    // });
+    // const querySnapshot = await getCollection(db, "users");
 
     // return querySnapshot.docs;
     return querySnapshot.docs.map((user) => {
@@ -150,7 +174,7 @@ const getUsers = async (db) => {
     //   return { error: true, message: "This user doesn't exist" };
     // }
   } catch (error) {
-    console.error(error.code);
+    console.error(error);
     return { error: error.code, message: "Error gettings users" };
   }
 };
