@@ -10,6 +10,7 @@ import "./App.css";
 import AdminRoute from "./components/AdminRoute";
 import CheckedRoute from "./components/CheckedRoute";
 import PremiumRoute from "./components/PremiumRoute";
+import MemberRoute from "./components/MemberRoute";
 import AdminPanel from "./views/AdminPanel";
 import Dashboard from "./views/Dashboard";
 import Home from "./views/Home";
@@ -50,10 +51,8 @@ function App() {
                 component={WorkawayMessaging}
               />
 
-              <Route exact path="/signup" component={SignUp} />
-              <Route exact path="/signin" component={SignIn} />
-
-              <Route exact path="/" component={Home} />
+              <CheckedRoute exact path="/signup" component={SignUp} />
+              <CheckedRoute exact path="/signin" component={SignIn} />
 
               <CheckedRoute
                 exact
@@ -61,11 +60,11 @@ function App() {
                 component={ResetPassword}
               />
 
-              <Route exact path="/dashboard" component={Dashboard} />
+              <MemberRoute exact path="/dashboard" component={Dashboard} />
 
               <AdminRoute exact path="/admin-panel" component={AdminPanel} />
 
-              {/* <CheckedRoute exact path="/" component={Home} /> */}
+              <CheckedRoute exact path="/" component={Home} />
 
               <Route path="/*" component={NotFound} />
             </Switch>

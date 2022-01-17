@@ -7,17 +7,19 @@ import {
   useFirestore,
   useFirestoreDocData,
   useSigninCheck,
-  useUser
+  useUser,
 } from "reactfire";
 import { logout } from "../firebase";
 
 function UserBloc() {
-  const { status, data: user } = useUser();
-  const burritoRef = doc(useFirestore(), "users", user?.uid);
-  const { status: stat, data: userEl } = useFirestoreDocData(burritoRef);
+  // const { status, data: user } = useUser();
+  // const burritoRef = doc(useFirestore(), "users", user?.uid);
+  // const { status: stat, data: userEl } = useFirestoreDocData(burritoRef);
+  const user = JSON.parse(localStorage.getItem("user"));
+
   return (
-    <Typography>{`${userEl?.isAdmin ? "Admin" : "Non admin"} ${
-      userEl?.email
+    <Typography>{`${user?.isAdmin ? "Admin" : "Non admin"} ${
+      user?.email
     }`}</Typography>
   );
 }
@@ -25,22 +27,24 @@ function UserBloc() {
 function CustomAppBar() {
   const history = useHistory();
   const auth = useAuth();
-  const { data: signInCheckResult } = useSigninCheck();
+  // const { data: signInCheckResult } = useSigninCheck();
+  const user = JSON.parse(localStorage.getItem("user"));
 
   // const userRef = doc(useFirestore(), "users", signInCheckResult.user.uid);
 
   // const { data: userProfile } = useFirestoreDocData(userRef);
 
   const handleLogoClick = () => {
-    if (!signInCheckResult?.signedIn) {
+    if (!user) {
       history.push("/");
+    } else {
+      history.push("/dashboard");
     }
-    else{history.push("/dashboard");}
   };
 
   const onLogoutClick = async () => {
     await logout(auth);
-
+    localStorage.removeItem("user");
     history.push("/");
   };
 
@@ -54,7 +58,7 @@ function CustomAppBar() {
             </Typography>
           </Button>
 
-          {signInCheckResult?.signedIn ? (
+          {user ? (
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <UserBloc />
 
