@@ -5,14 +5,11 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 
 const ResetPasswordForm = () => {
-  const theme = useTheme();
   const [isLoading, setIsLoading] = useState(false);
 
   const {
     register,
     handleSubmit,
-    watch,
-    control,
     formState: { errors },
   } = useForm();
 

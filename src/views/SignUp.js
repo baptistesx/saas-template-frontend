@@ -1,14 +1,14 @@
 import { Box, Typography } from "@mui/material";
 import CustomAppBar from "../components/CustomAppBar";
-import SignInForm from "../components/SignUpForm";
+import SignUpForm from "../components/SignUpForm";
 
-function SignIn() {
+function SignUp() {
   return (
     <div>
       <CustomAppBar />
 
       <Typography variant="h1" sx={{ textAlign: "center" }}>
-        Sign In
+        Sign Up
       </Typography>
 
       <Box
@@ -20,10 +20,10 @@ function SignIn() {
           flexWrap: "wrap",
         }}
       >
-        <SignInForm />
+        <SignUpForm />
       </Box>
     </div>
   );
 }
 
-export default SignIn;
+export default SignUp;

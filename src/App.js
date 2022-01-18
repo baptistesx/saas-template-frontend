@@ -1,12 +1,15 @@
 import { green, purple } from "@mui/material/colors";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import React, { useState } from "react";
+import { getAuth } from "firebase/auth"; // Firebase v9+
+import { getFirestore } from "firebase/firestore";
+import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { AuthProvider, FirestoreProvider, useFirebaseApp } from "reactfire";
 import "./App.css";
 import AdminRoute from "./components/AdminRoute";
-import CheckedRoute from "./components/CheckedRoute";
-import ProtectedRoute from "./components/ProtectedRoute";
-import userContext from "./utils/userContext";
+import NotSignedInRoute from "./components/NotSignedInRoute";
+import PremiumRoute from "./components/PremiumRoute";
+import SignedInRoute from "./components/SignedInRoute";
 import AdminPanel from "./views/AdminPanel";
 import Dashboard from "./views/Dashboard";
 import Home from "./views/Home";
@@ -31,51 +34,41 @@ const theme = createTheme({
 });
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [email, setEmail] = useState("");
-  const [isAdmin, setIsAdmin] = useState("");
+  const app = useFirebaseApp(); // a parent component contains a `FirebaseAppProvider`
+  const firestoreInstance = getFirestore(app);
+  const auth = getAuth(app);
 
   return (
-    <userContext.Provider
-      value={{
-        isLoggedIn,
-        setIsLoggedIn,
-        email,
-        setEmail,
-        isAdmin,
-        setIsAdmin,
-      }}
-    >
-      <ThemeProvider theme={theme}>
-        <Router>
-          <Switch>
-            <ProtectedRoute
-              exact
-              path="/workaway-messaging"
-              component={WorkawayMessaging}
-            />
+    <AuthProvider sdk={auth}>
+      <FirestoreProvider sdk={firestoreInstance}>
+        <ThemeProvider theme={theme}>
+          <Router>
+            <Switch>
+              <NotSignedInRoute exact path="/signup" component={SignUp} />
+              <NotSignedInRoute exact path="/signin" component={SignIn} />
+              <NotSignedInRoute exact path="/" component={Home} />
+              <NotSignedInRoute
+                exact
+                path="/reset-password"
+                component={ResetPassword}
+              />
 
-            <CheckedRoute exact path="/signup" component={SignUp} />
+              <SignedInRoute exact path="/dashboard" component={Dashboard} />
 
-            <CheckedRoute exact path="/signin" component={SignIn} />
+              <PremiumRoute
+                exact
+                path="/workaway-messaging"
+                component={WorkawayMessaging}
+              />
 
-            <CheckedRoute
-              exact
-              path="/reset-password"
-              component={ResetPassword}
-            />
+              <AdminRoute exact path="/admin-panel" component={AdminPanel} />
 
-            <ProtectedRoute exact path="/dashboard" component={Dashboard} />
-
-            <AdminRoute exact path="/admin-panel" component={AdminPanel} />
-
-            <CheckedRoute exact path="/" component={Home} />
-
-            <Route path="/*" component={NotFound} />
-          </Switch>
-        </Router>
-      </ThemeProvider>
-    </userContext.Provider>
+              <Route path="/*" component={NotFound} />
+            </Switch>
+          </Router>
+        </ThemeProvider>
+      </FirestoreProvider>
+    </AuthProvider>
   );
 }
 

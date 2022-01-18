@@ -1,9 +1,8 @@
 import { Box, Typography } from "@mui/material";
-import React from "react";
 import CustomAppBar from "../components/CustomAppBar";
 import SignInForm from "../components/SignInForm";
 
-function Login() {
+function SignIn() {
   return (
     <div>
       <CustomAppBar />
@@ -27,4 +26,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default SignIn;

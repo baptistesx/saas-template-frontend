@@ -175,7 +175,6 @@ function CitiesFormDialog(props) {
   };
 
   const handleOk = () => {
-    console.log(value);
     onClose(value);
   };
 

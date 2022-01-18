@@ -1,23 +1,19 @@
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { Box, Button, Typography } from "@mui/material";
-import React, { useContext, useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import { doc } from "firebase/firestore";
+import React from "react";
+import { useFirestore, useFirestoreDocData, useUser } from "reactfire";
 import CustomAppBar from "../components/CustomAppBar";
 import CustomBodyLayout from "../components/CustomBodyLayout";
-import userContext from "../utils/userContext";
 
 function Dashboard() {
-  const history = useHistory();
-  const { setIsLoggedIn, isAdmin, setIsAdmin } = useContext(userContext);
+  const { data: user } = useUser();
 
-  useEffect(() => {
-    if (localStorage.getItem("isLoggedIn") === "true") {
-      setIsLoggedIn(true);
-      if (localStorage.getItem("isAdmin") === "true") {
-        setIsAdmin(true);
-      }
-    }
-  });
+  const uid = JSON.parse(localStorage.getItem("user")).id;
+
+  const userRef = doc(useFirestore(), "users", uid);
+
+  const { data: userProfile } = useFirestoreDocData(userRef);
 
   return (
     <div>
@@ -26,7 +22,7 @@ function Dashboard() {
       <CustomBodyLayout>
         <Typography variant="h1">Bots list</Typography>
 
-        {isAdmin ? (
+        {userProfile?.isPremium ? (
           <Box sx={{ display: "flex", flexDirection: "column" }}>
             <Button
               href="/workaway-messaging"
@@ -36,17 +32,28 @@ function Dashboard() {
               Workaway messaging
               <ArrowForwardIcon />
             </Button>
-
+          </Box>
+        ) : (
+          <Button href="/get-licence" variant="contained" sx={{ m: 1 }}>
+            Get Premium Account to access bots !
+            <ArrowForwardIcon />
+          </Button>
+        )}
+        {userProfile?.isAdmin ? (
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
             <Button href="/admin-panel" variant="contained" sx={{ m: 1 }}>
               Admin panel
               <ArrowForwardIcon />
             </Button>
           </Box>
+        ) : (<Box />
+        )}
+        {!user?.emailVerified ? (
+          <Typography>
+            Pense à vérifier ton compte via le lien dans l'email de confirmation
+          </Typography>
         ) : (
-          <Button href="/admin-panel" variant="contained" sx={{ m: 1 }}>
-            Get Premium Account to access bots !
-            <ArrowForwardIcon />
-          </Button>
+          ""
         )}
       </CustomBodyLayout>
     </div>

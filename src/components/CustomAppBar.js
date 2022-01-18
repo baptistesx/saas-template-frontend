@@ -1,23 +1,27 @@
 import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material/";
-import React, { useContext, useEffect } from "react";
+import React from "react";
 import { useHistory } from "react-router-dom";
+import { useAuth } from "reactfire";
 import { logout } from "../firebase";
-import userContext from "../utils/userContext";
+
+function UserBloc() {
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  return (
+    <Typography>{`${user?.isAdmin ? "Admin" : "Non admin"} ${
+      user?.email
+    }`}</Typography>
+  );
+}
 
 function CustomAppBar() {
-  const { setIsLoggedIn, isLoggedIn, email, setEmail } =
-    useContext(userContext);
   const history = useHistory();
+  const auth = useAuth();
 
-  useEffect(() => {
-    if (localStorage.getItem("isLoggedIn")) {
-      setIsLoggedIn(true);
-      setEmail(localStorage.getItem("email"));
-    }
-  });
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const handleLogoClick = () => {
-    if (!isLoggedIn) {
+    if (!user) {
       history.push("/");
     } else {
       history.push("/dashboard");
@@ -25,15 +29,9 @@ function CustomAppBar() {
   };
 
   const onLogoutClick = async () => {
-    localStorage.removeItem("email");
-    localStorage.removeItem("isLoggedIn");
-    localStorage.removeItem("isAdmin");
-
-    await logout();
-
+    await logout(auth);
+    localStorage.removeItem("user");
     history.push("/");
-
-    window.location.reload();
   };
 
   return (
@@ -42,13 +40,13 @@ function CustomAppBar() {
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
           <Button onClick={handleLogoClick} style={{ textDecoration: "none" }}>
             <Typography variant="h6" component="div" sx={{ color: "white" }}>
-              Bots Dashboard
+              Im-Lazy
             </Typography>
           </Button>
 
-          {isLoggedIn ? (
+          {user ? (
             <Box sx={{ display: "flex", alignItems: "center" }}>
-              <Typography>{email}</Typography>
+              <UserBloc />
 
               <Typography>|</Typography>
 
