@@ -6,12 +6,13 @@ import {
   CardContent,
   TextField,
 } from "@mui/material";
-import { Box, useTheme } from "@mui/system";
+import { Box } from "@mui/system";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
 import { useAuth, useFirestore } from "reactfire";
 import { loginWithEmailAndPassword, signInWithGoogle } from "../firebase";
+
 function SignInForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,9 +25,6 @@ function SignInForm() {
 
   const {
     register,
-    handleSubmit,
-    watch,
-    control,
     formState: { errors },
   } = useForm();
 
@@ -37,7 +35,6 @@ function SignInForm() {
 
     const res = await loginWithEmailAndPassword({ auth, db, email, password });
     setIsLoggingWithEmailAndPassword(false);
-    // const res = await loginWithEmailAndPassword(data);
 
     if (res.error) {
       console.error(res.message);
@@ -48,10 +45,6 @@ function SignInForm() {
       } else if (!res.isNewUser) {
         alert("Welcome back!");
       }
-
-      // localStorage.setItem("userId", res.id);
-      // localStorage.setItem("email", res.data.email);
-      // localStorage.setItem("isAdmin", res.data.isAdmin);
 
       history.push("/dashboard");
     }
@@ -72,9 +65,7 @@ function SignInForm() {
       } else if (!res.isNewUser) {
         alert("Welcome back!");
       }
-      // localStorage.setItem("isLoggedIn", true);
-      // localStorage.setItem("email", res.data.email);
-      // localStorage.setItem("isAdmin", res.data.isAdmin);
+
       history.push("/dashboard");
     }
   };

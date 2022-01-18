@@ -1,16 +1,15 @@
 import { green, purple } from "@mui/material/colors";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { getAuth } from "firebase/auth"; // Firebase v9+
-import "firebase/firestore";
 import { getFirestore } from "firebase/firestore";
 import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { AuthProvider, FirestoreProvider, useFirebaseApp } from "reactfire";
 import "./App.css";
 import AdminRoute from "./components/AdminRoute";
-import CheckedRoute from "./components/CheckedRoute";
+import NotSignedInRoute from "./components/NotSignedInRoute";
 import PremiumRoute from "./components/PremiumRoute";
-import MemberRoute from "./components/MemberRoute";
+import SignedInRoute from "./components/SignedInRoute";
 import AdminPanel from "./views/AdminPanel";
 import Dashboard from "./views/Dashboard";
 import Home from "./views/Home";
@@ -45,26 +44,24 @@ function App() {
         <ThemeProvider theme={theme}>
           <Router>
             <Switch>
+              <NotSignedInRoute exact path="/signup" component={SignUp} />
+              <NotSignedInRoute exact path="/signin" component={SignIn} />
+              <NotSignedInRoute exact path="/" component={Home} />
+              <NotSignedInRoute
+                exact
+                path="/reset-password"
+                component={ResetPassword}
+              />
+
+              <SignedInRoute exact path="/dashboard" component={Dashboard} />
+
               <PremiumRoute
                 exact
                 path="/workaway-messaging"
                 component={WorkawayMessaging}
               />
 
-              <CheckedRoute exact path="/signup" component={SignUp} />
-              <CheckedRoute exact path="/signin" component={SignIn} />
-
-              <CheckedRoute
-                exact
-                path="/reset-password"
-                component={ResetPassword}
-              />
-
-              <MemberRoute exact path="/dashboard" component={Dashboard} />
-
               <AdminRoute exact path="/admin-panel" component={AdminPanel} />
-
-              <CheckedRoute exact path="/" component={Home} />
 
               <Route path="/*" component={NotFound} />
             </Switch>

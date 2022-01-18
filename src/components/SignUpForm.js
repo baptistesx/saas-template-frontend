@@ -14,7 +14,6 @@ import { useAuth, useFirestore } from "reactfire";
 import { registerWithEmailAndPassword } from "../firebase";
 
 const SignUpForm = () => {
-  const theme = useTheme();
   const [isSigningUp, setIsSigningUp] = useState(false);
   const history = useHistory();
   const auth = useAuth();
@@ -22,13 +21,10 @@ const SignUpForm = () => {
   const {
     register,
     handleSubmit,
-    watch,
-    control,
     formState: { errors },
   } = useForm();
 
   const onRegisterClick = async (data) => {
-    console.log(data);
     setIsSigningUp(true);
     const res = await registerWithEmailAndPassword({ auth, db, ...data });
     setIsSigningUp(false);

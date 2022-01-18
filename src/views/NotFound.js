@@ -5,7 +5,7 @@ import CustomAppBar from "../components/CustomAppBar";
 import CustomBodyLayout from "../components/CustomBodyLayout";
 
 function NotFound() {
-  const { status, data: signInCheckResult } = useSigninCheck();
+  const { data: signInCheckResult } = useSigninCheck();
 
   return (
     <div>

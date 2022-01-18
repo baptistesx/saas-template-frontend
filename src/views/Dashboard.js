@@ -5,16 +5,16 @@ import React from "react";
 import { useFirestore, useFirestoreDocData, useUser } from "reactfire";
 import CustomAppBar from "../components/CustomAppBar";
 import CustomBodyLayout from "../components/CustomBodyLayout";
+
 function Dashboard() {
-  const { status, data: user } = useUser();
-  // console.log("user", user);
+  const { data: user } = useUser();
 
   const uid = JSON.parse(localStorage.getItem("user")).id;
-  console.log("uiiiiid", uid);
+
   const userRef = doc(useFirestore(), "users", uid);
 
   const { data: userProfile } = useFirestoreDocData(userRef);
-// const userProfile = JSON.parse(localStorage.getItem("user"))
+
   return (
     <div>
       <CustomAppBar />

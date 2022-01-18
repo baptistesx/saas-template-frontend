@@ -2,7 +2,7 @@ import { Box, Typography } from "@mui/material";
 import CustomAppBar from "../components/CustomAppBar";
 import SignUpForm from "../components/SignUpForm";
 
-function SignIn() {
+function SignUp() {
   return (
     <div>
       <CustomAppBar />
@@ -26,4 +26,4 @@ function SignIn() {
   );
 }
 
-export default SignIn;
+export default SignUp;

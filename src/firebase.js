@@ -15,8 +15,11 @@ import {
   setDoc,
   where,
 } from "firebase/firestore";
-const provider = new GoogleAuthProvider();
+
+
 const signInWithGoogle = async ({auth, db}) => {
+  const provider = new GoogleAuthProvider();
+
   try {
     // Auth with google account
     const res = await signInWithPopup(auth, provider);

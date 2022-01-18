@@ -1,20 +1,10 @@
 import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material/";
-import { doc } from "firebase/firestore";
 import React from "react";
 import { useHistory } from "react-router-dom";
-import {
-  useAuth,
-  useFirestore,
-  useFirestoreDocData,
-  useSigninCheck,
-  useUser,
-} from "reactfire";
+import { useAuth } from "reactfire";
 import { logout } from "../firebase";
 
 function UserBloc() {
-  // const { status, data: user } = useUser();
-  // const burritoRef = doc(useFirestore(), "users", user?.uid);
-  // const { status: stat, data: userEl } = useFirestoreDocData(burritoRef);
   const user = JSON.parse(localStorage.getItem("user"));
 
   return (
@@ -27,12 +17,8 @@ function UserBloc() {
 function CustomAppBar() {
   const history = useHistory();
   const auth = useAuth();
-  // const { data: signInCheckResult } = useSigninCheck();
+
   const user = JSON.parse(localStorage.getItem("user"));
-
-  // const userRef = doc(useFirestore(), "users", signInCheckResult.user.uid);
-
-  // const { data: userProfile } = useFirestoreDocData(userRef);
 
   const handleLogoClick = () => {
     if (!user) {
