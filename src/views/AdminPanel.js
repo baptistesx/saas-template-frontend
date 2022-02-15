@@ -28,50 +28,69 @@ import CustomAppBar from "../components/CustomAppBar";
 import { deleteUserById, getUsers, toggleAdminRights } from "../firebase";
 
 function AdminPanel() {
+  const currentUser = JSON.parse(localStorage.getItem("user"));
+
   const [isLoading, setIsLoading] = useState(true);
   const [users, setUsers] = useState([]);
   const db = useFirestore(); // a parent component contains a `FirebaseAppProvider`
 
-  useEffect(async () => {
-    onRefreshClick();
+  useEffect(() => {
+    fetchData();
   }, []);
 
   const onRefreshClick = async () => {
+    await fetchData();
+  };
+
+  const fetchData = async () => {
     setIsLoading(true);
 
-    const res = await getUsers(db);
-    if (res?.error) {
-      setUsers([]);
-    } else {
+    try {
+      const res = await getUsers(db);
+
       setUsers([...res]);
+    } catch (err) {
+      setUsers([]);
+
+      alert(err + " : Error fetching users");
     }
+
     setIsLoading(false);
   };
 
   const onDeleteClick = async (userId) => {
     setIsLoading(true);
 
-    const res = await deleteUserById(userId);
-    console.log(res);
-    setUsers([...res]);
+    try {
+      await deleteUserById(db, userId);
+    } catch (err) {
+      alert(err + " : Error deleting user");
+    }
+
+    await fetchData();
+
     setIsLoading(false);
   };
 
-  const onToggleAdminRightsClick = async (userId, isAdmin) => {
-    const res = await toggleAdminRights(userId, isAdmin);
+  const onToggleAdminRights = async (userId, isAdmin) => {
+    setIsLoading(true);
 
-    if (res.error) {
-      alert(res.message);
-    } else {
+    try {
+      await toggleAdminRights(db, userId, isAdmin);
+
       setUsers(
         users.map((user) => {
           if (user.id === userId) {
-            return { ...user, isAdmin: res };
+            return { ...user, isAdmin: !isAdmin };
           }
           return user;
         })
       );
+    } catch (err) {
+      alert(err + " : Error toggling admin rights");
     }
+
+    setIsLoading(false);
   };
 
   return (
@@ -81,19 +100,12 @@ function AdminPanel() {
       <CenteredLayout>
         <Typography variant="h1">Admin Panel</Typography>
 
-        <Card
-          sx={{
-            m: 1,
-            p: 1,
-            display: "flex",
-            flexWrap: "wrap",
-          }}
-        >
+        <Card>
           <CardContent>
             {users.length === 0 && isLoading ? (
               <Box />
             ) : (
-              <>
+              <Box>
                 <Typography variant="body1">
                   {`${users.length} Available users`}
                 </Typography>
@@ -102,7 +114,7 @@ function AdminPanel() {
                   <Typography>No users</Typography>
                 ) : (
                   <TableContainer component={Paper}>
-                    <Table aria-label="files table">
+                    <Table aria-label="users table">
                       <TableHead>
                         <TableRow>
                           <TableCell align="left">Admin</TableCell>
@@ -111,82 +123,66 @@ function AdminPanel() {
                           <TableCell align="left">Actions</TableCell>
                         </TableRow>
                       </TableHead>
+
                       <TableBody>
                         {users.map((user) => (
-                          <TableRow
-                            key={user.id}
-                            sx={{
-                              "&:last-child td, &:last-child th": { border: 0 },
-                            }}
-                          >
+                          <TableRow key={user.id}>
                             <TableCell component="th" scope="row">
                               {user.isAdmin ? <CheckIcon /> : <ClearIcon />}
                             </TableCell>
+
                             <TableCell component="th" scope="row">
+                              {/* //TODO: handle licence */}
                               {/* {user.licenceExpiration
                                 ? format(user.licenceExpiration, "d MMMM yyyy")
                                 : ""} */}
                             </TableCell>
+
                             <TableCell component="th" scope="row">
                               {user.email}
                             </TableCell>
+
                             <TableCell align="left">
-                              {user.isAdmin ? (
-                                <Tooltip title="Remove admin rights">
-                                  <IconButton
-                                    aria-label="remove-moderator"
-                                    onClick={() =>
-                                      onToggleAdminRightsClick(
-                                        user.id,
-                                        user.isAdmin
-                                      )
-                                    }
-                                    disabled={
-                                      user.email ===
-                                      localStorage.getItem("email")
-                                    }
-                                  >
+                              <Tooltip title="Toggle admin rights">
+                                <IconButton
+                                  aria-label="toggle-admin-rights"
+                                  onClick={() =>
+                                    onToggleAdminRights(user.id, user.isAdmin)
+                                  }
+                                  disabled={
+                                    user.email === currentUser.email ||
+                                    isLoading
+                                  }
+                                >
+                                  {user.isAdmin ? (
                                     <RemoveModeratorIcon />
-                                  </IconButton>
-                                </Tooltip>
-                              ) : (
-                                <Tooltip title="Add admin rights">
-                                  <IconButton
-                                    aria-label="add-moderator"
-                                    onClick={() =>
-                                      onToggleAdminRightsClick(
-                                        user.id,
-                                        user.isAdmin
-                                      )
-                                    }
-                                    disabled={
-                                      user.email ===
-                                      localStorage.getItem("email")
-                                    }
-                                  >
+                                  ) : (
                                     <AddModeratorIcon />
-                                  </IconButton>
-                                </Tooltip>
-                              )}
+                                  )}
+                                </IconButton>
+                              </Tooltip>
+
+                              <Tooltip title="Edit user">
+                                <IconButton
+                                  disabled={
+                                    user.email === currentUser.email ||
+                                    isLoading
+                                  }
+                                >
+                                  <EditIcon />
+                                </IconButton>
+                              </Tooltip>
 
                               <Tooltip title="Delete user">
                                 <IconButton
                                   aria-label="delete"
                                   onClick={() => onDeleteClick(user.id)}
                                   disabled={
-                                    user.email === localStorage.getItem("email")
+                                    user.email === currentUser.email ||
+                                    isLoading
                                   }
                                 >
                                   <DeleteIcon />
-                                </IconButton>
-                              </Tooltip>
-                              <Tooltip title="Edit user">
-                                <IconButton
-                                  disabled={
-                                    user.email === localStorage.getItem("email")
-                                  }
-                                >
-                                  <EditIcon />
                                 </IconButton>
                               </Tooltip>
                             </TableCell>
@@ -196,7 +192,7 @@ function AdminPanel() {
                     </Table>
                   </TableContainer>
                 )}
-              </>
+              </Box>
             )}
           </CardContent>
 

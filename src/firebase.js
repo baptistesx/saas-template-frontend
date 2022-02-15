@@ -153,71 +153,29 @@ const logout = (auth) => {
 };
 
 const getUsers = async (db) => {
-  try {
-    console.log("before");
-    // Check if user already registered
-    const q = query(collection(db, "users"));
-    const querySnapshot = await getDocs(q);
-    console.log("after");
+  // Check if user already registered
+  const q = query(collection(db, "users"));
+  const querySnapshot = await getDocs(q);
 
-    // querySnapshot.forEach((doc) => {
-    //   // doc.data() is never undefined for query doc snapshots
-    //   console.log(doc.id, " => ", doc.data());
-    // });
-    // const querySnapshot = await getCollection(db, "users");
-
-    // return querySnapshot.docs;
-    return querySnapshot.docs.map((user) => {
-      return { ...user.data(), id: user.id };
-    });
-    // if (querySnapshot.docs.length > 0) {
-    //   return {
-    //     isNewUser: false,
-    //     data: querySnapshot.docs[0].data(),
-    //     id: querySnapshot.docs[0].id,
-    //   };
-    // } else {
-    //   return { error: true, message: "This user doesn't exist" };
-    // }
-  } catch (error) {
-    console.error(error);
-    return { error: error.code, message: "Error gettings users" };
-  }
+  return querySnapshot.docs.map((user) => {
+    return { ...user.data(), id: user.id };
+  });
 };
 
 const deleteUserById = async (db, id) => {
-  try {
-    // await deleteDoc(doc(db, "users", id));
-    // Check if user already registered
-    const docRef = doc(db, "users", id);
+  console.log(id);
+  // Check if user already registered
+  const docRef = doc(db, "users", id);
 
-    const docSnap = await getDoc(docRef);
-    console.log(docSnap);
-    // const user = await getUserById(docSnap);
-    await deleteUser(docSnap);
-    // return [];
-    return getUsers();
-  } catch (error) {
-    console.error(error);
-    return { error: true, message: "Error deleting user" };
-  }
+  const docSnap = await getDoc(docRef);
+  //TODO: find how to delete user from Firebase Auth
+  // await deleteUser(id);
 };
 
 const toggleAdminRights = async (db, id, isAdmin) => {
-  try {
-    let docRef = doc(db, "users", id);
+  let docRef = doc(db, "users", id);
 
-    // const currentDate = new Date();
-    // const licenceExpiration = new Date(
-    //   currentDate.setMonth(currentDate.getMonth() + 1)
-    // );
-    await setDoc(docRef, { idAdmin: !isAdmin }, { merge: true });
-    return !isAdmin;
-  } catch (error) {
-    return { error: true, message: "Failed to toggle admin rights" };
-    // console.error(error);
-    // return { error: error.code, message: "Error deleting user" };
-  }
+  await setDoc(docRef, { isAdmin: !isAdmin }, { merge: true });
 };
 
 export {
