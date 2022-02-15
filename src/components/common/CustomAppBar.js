@@ -1,22 +1,21 @@
 import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material/";
 import React from "react";
 import { useHistory } from "react-router-dom";
-import { useAuth } from "reactfire";
-import { logout } from "../firebase";
+import { logout } from "../../backendFunctions";
 
 function UserBloc() {
   const user = JSON.parse(localStorage.getItem("user"));
 
   return (
-    <Typography>{`${user?.isAdmin ? "Admin" : "Non admin"} ${
-      user?.email
-    }`}</Typography>
+    <Typography>
+      {`${user?.is_admin ? "Admin," : ""}
+      ${user?.is_premium ? "Premium, " : ""} ${user?.email}`}
+    </Typography>
   );
 }
 
 function CustomAppBar() {
   const history = useHistory();
-  const auth = useAuth();
 
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -28,9 +27,9 @@ function CustomAppBar() {
     }
   };
 
-  const onLogoutClick = async () => {
-    await logout(auth);
-    localStorage.removeItem("user");
+  const onLogoutClick = () => {
+    logout();
+
     history.push("/");
   };
 

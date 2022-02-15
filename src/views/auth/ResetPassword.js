@@ -1,7 +1,7 @@
 import { Typography } from "@mui/material";
-import CenteredLayout from "../components/CenteredLayout";
-import CustomAppBar from "../components/CustomAppBar";
-import ResetPasswordForm from "../components/ResetPasswordForm";
+import CenteredLayout from "../../components/layout/CenteredLayout";
+import CustomAppBar from "../../components/common/CustomAppBar";
+import ResetPasswordForm from "../../components/auth/ResetPasswordForm.js";
 
 function ResetPassword() {
   return (

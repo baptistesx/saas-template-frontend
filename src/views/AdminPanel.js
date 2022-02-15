@@ -22,17 +22,15 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useFirestore } from "reactfire";
-import CenteredLayout from "../components/CenteredLayout";
-import CustomAppBar from "../components/CustomAppBar";
-import { deleteUserById, getUsers, toggleAdminRights } from "../firebase";
+import CenteredLayout from "../components/layout/CenteredLayout";
+import CustomAppBar from "../components/common/CustomAppBar";
+import { deleteUserById, getUsers, toggleAdminRights } from "../backendFunctions";
 
 function AdminPanel() {
   const currentUser = JSON.parse(localStorage.getItem("user"));
 
   const [isLoading, setIsLoading] = useState(true);
   const [users, setUsers] = useState([]);
-  const db = useFirestore(); // a parent component contains a `FirebaseAppProvider`
 
   useEffect(() => {
     fetchData();
@@ -46,8 +44,8 @@ function AdminPanel() {
     setIsLoading(true);
 
     try {
-      const res = await getUsers(db);
-
+      const res = await getUsers();
+      console.log(res);
       setUsers([...res]);
     } catch (err) {
       setUsers([]);
@@ -62,7 +60,7 @@ function AdminPanel() {
     setIsLoading(true);
 
     try {
-      await deleteUserById(db, userId);
+      await deleteUserById(userId);
     } catch (err) {
       alert(err + " : Error deleting user");
     }
@@ -72,16 +70,16 @@ function AdminPanel() {
     setIsLoading(false);
   };
 
-  const onToggleAdminRights = async (userId, isAdmin) => {
+  const onToggleAdminRights = async (userId) => {
     setIsLoading(true);
 
     try {
-      await toggleAdminRights(db, userId, isAdmin);
+      await toggleAdminRights(userId);
 
       setUsers(
         users.map((user) => {
           if (user.id === userId) {
-            return { ...user, isAdmin: !isAdmin };
+            return { ...user, is_admin: !user.is_admin };
           }
           return user;
         })
@@ -128,7 +126,7 @@ function AdminPanel() {
                         {users.map((user) => (
                           <TableRow key={user.id}>
                             <TableCell component="th" scope="row">
-                              {user.isAdmin ? <CheckIcon /> : <ClearIcon />}
+                              {user.is_admin ? <CheckIcon /> : <ClearIcon />}
                             </TableCell>
 
                             <TableCell component="th" scope="row">
@@ -146,15 +144,13 @@ function AdminPanel() {
                               <Tooltip title="Toggle admin rights">
                                 <IconButton
                                   aria-label="toggle-admin-rights"
-                                  onClick={() =>
-                                    onToggleAdminRights(user.id, user.isAdmin)
-                                  }
+                                  onClick={() => onToggleAdminRights(user.id)}
                                   disabled={
                                     user.email === currentUser.email ||
                                     isLoading
                                   }
                                 >
-                                  {user.isAdmin ? (
+                                  {user.is_admin ? (
                                     <RemoveModeratorIcon />
                                   ) : (
                                     <AddModeratorIcon />

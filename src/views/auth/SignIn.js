@@ -1,7 +1,7 @@
 import { Typography } from "@mui/material";
-import CustomAppBar from "../components/CustomAppBar";
-import SignInForm from "../components/SignInForm";
-import CenteredLayout from "../components/CenteredLayout";
+import CustomAppBar from "../../components/common/CustomAppBar";
+import SignInForm from "../../components/auth/SignInForm";
+import CenteredLayout from "../../components/layout/CenteredLayout";
 
 function SignIn() {
   return (

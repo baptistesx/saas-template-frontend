@@ -1,21 +1,12 @@
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { Box, Button, Typography } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
-import { doc } from "firebase/firestore";
 import React from "react";
-import { useFirestore, useFirestoreDocData, useUser } from "reactfire";
-import CenteredLayout from "../components/CenteredLayout";
-import CustomAppBar from "../components/CustomAppBar";
+import CenteredLayout from "../components/layout/CenteredLayout";
+import CustomAppBar from "../components/common/CustomAppBar";
 
 function Dashboard() {
-  const { data: userAuth } = useUser();
-
-  const uid = JSON.parse(localStorage.getItem("user")).id;
-
-  //TODO: find a way yo use userAuth.uid instead of the uid stored in localstorage
-  const userRef = doc(useFirestore(), "users", uid);
-
-  const { data: userProfile } = useFirestoreDocData(userRef);
+  const user = JSON.parse(localStorage.getItem("user"));
 
   return (
     <div>
@@ -23,8 +14,8 @@ function Dashboard() {
 
       <CenteredLayout>
         <Typography variant="h1">Bots list</Typography>
-        {userAuth && userProfile ? (
-          userProfile?.isPremium ? (
+        {user ? (
+          user?.is_premium ? (
             <Button
               href="/workaway-messaging"
               variant="contained"
@@ -43,8 +34,8 @@ function Dashboard() {
           <CircularProgress />
         )}
 
-        {userAuth && userProfile ? (
-          userProfile?.isAdmin ? (
+        {user ? (
+          user?.is_admin ? (
             <Box sx={{ display: "flex", flexDirection: "column" }}>
               <Button href="/admin-panel" variant="contained" sx={{ m: 1 }}>
                 Admin panel
@@ -58,7 +49,7 @@ function Dashboard() {
           <CircularProgress />
         )}
 
-        {!userAuth?.emailVerified ? (
+        {!user?.is_email_verified ? (
           <Typography>
             Remember to check the confirmation email we sent you.
           </Typography>

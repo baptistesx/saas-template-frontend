@@ -1,17 +1,14 @@
 import { Button, Typography } from "@mui/material";
 import React from "react";
-import { useSigninCheck } from "reactfire";
-import CustomAppBar from "../components/CustomAppBar";
-import CenteredLayout from "../components/CenteredLayout";
+import CustomAppBar from "../components/common/CustomAppBar";
+import CenteredLayout from "../components/layout/CenteredLayout";
 import { useHistory } from "react-router-dom";
 
 function NotFound() {
-  const { data: signInCheckResult } = useSigninCheck();
-
   const history = useHistory();
 
   const redirect = () => {
-    if (signInCheckResult?.signedIn) {
+    if (localStorage.getItem("token")) {
       history.push("/dashboard");
     } else {
       history.push("/");

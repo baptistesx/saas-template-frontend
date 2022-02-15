@@ -13,7 +13,7 @@ import { Box, useTheme } from "@mui/system";
 import axios from "axios";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { ENDPOINT } from "../utils/constants";
+import { ENDPOINT } from "../../utils/constants";
 
 const InfoForm = () => {
   const [isStarting, setIsStarting] = useState(false);

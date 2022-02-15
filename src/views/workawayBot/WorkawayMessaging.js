@@ -1,8 +1,8 @@
 import { Box, Typography } from "@mui/material";
-import BotLogs from "../components/BotLogs";
-import CustomAppBar from "../components/CustomAppBar";
-import FilesSection from "../components/FilesSection";
-import InfoForm from "../components/InfoForm";
+import BotLogs from "../../components/workawayBot/BotLogs";
+import CustomAppBar from "../../components/common/CustomAppBar";
+import FilesSection from "../../components/workawayBot/FilesSection";
+import InfoForm from "../../components/workawayBot/InfoForm";
 
 function WorkawayMessaging() {
   return (

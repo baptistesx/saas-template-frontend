@@ -10,9 +10,8 @@ import {
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
-import { useAuth, useFirestore } from "reactfire";
 import * as yup from "yup";
-import { loginWithEmailAndPassword, signInWithGoogle } from "../firebase";
+import { loginWithEmailAndPassword } from "../../backendFunctions";
 
 //TODO: validate and update error message in direct live
 const schema = yup
@@ -30,10 +29,6 @@ function SignInForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const auth = useAuth();
-  const db = useFirestore();
-
-  const [isLoggingWithGoogle, setIsLoggingWithGoogle] = useState(false);
   const [isLoggingWithEmailAndPassword, setIsLoggingWithEmailAndPassword] =
     useState(false);
 
@@ -50,19 +45,9 @@ function SignInForm() {
   const onSubmit = async (data) => {
     setIsLoggingWithEmailAndPassword(true);
 
-    const res = await loginWithEmailAndPassword({ auth, db, email, password });
+    const res = await loginWithEmailAndPassword({ email, password });
 
     setIsLoggingWithEmailAndPassword(false);
-
-    welcomeAndRedirectUser(res);
-  };
-
-  const onSignInWithGoogleClick = async () => {
-    setIsLoggingWithGoogle(true);
-
-    const res = await signInWithGoogle({ auth, db });
-
-    setIsLoggingWithGoogle(false);
 
     welcomeAndRedirectUser(res);
   };
@@ -74,7 +59,7 @@ function SignInForm() {
       console.error(res.message);
       alert(res.message);
     } else {
-      if (res.isNewUser) {
+      if (res.is_new_user) {
         alert("Welcome newbie!");
       } else if (!res.isNewUser) {
         alert("Welcome back!");
@@ -121,17 +106,6 @@ function SignInForm() {
             loading={isLoggingWithEmailAndPassword}
           >
             Sign In
-          </LoadingButton>
-
-          <LoadingButton
-            variant="contained"
-            loading={isLoggingWithGoogle}
-            sx={{
-              m: 1,
-            }}
-            onClick={onSignInWithGoogleClick}
-          >
-            Sign In with Google
           </LoadingButton>
 
           <Button
