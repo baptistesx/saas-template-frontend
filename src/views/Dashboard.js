@@ -1,16 +1,18 @@
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { Box, Button, Typography } from "@mui/material";
+import CircularProgress from "@mui/material/CircularProgress";
 import { doc } from "firebase/firestore";
 import React from "react";
 import { useFirestore, useFirestoreDocData, useUser } from "reactfire";
+import CenteredLayout from "../components/CenteredLayout";
 import CustomAppBar from "../components/CustomAppBar";
-import CustomBodyLayout from "../components/CustomBodyLayout";
 
 function Dashboard() {
-  const { data: user } = useUser();
+  const { data: userAuth } = useUser();
 
   const uid = JSON.parse(localStorage.getItem("user")).id;
 
+  //TODO: find a way yo use userAuth.uid instead of the uid stored in localstorage
   const userRef = doc(useFirestore(), "users", uid);
 
   const { data: userProfile } = useFirestoreDocData(userRef);
@@ -19,11 +21,10 @@ function Dashboard() {
     <div>
       <CustomAppBar />
 
-      <CustomBodyLayout>
+      <CenteredLayout>
         <Typography variant="h1">Bots list</Typography>
-
-        {userProfile?.isPremium ? (
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
+        {userAuth && userProfile ? (
+          userProfile?.isPremium ? (
             <Button
               href="/workaway-messaging"
               variant="contained"
@@ -32,30 +33,39 @@ function Dashboard() {
               Workaway messaging
               <ArrowForwardIcon />
             </Button>
-          </Box>
-        ) : (
-          <Button href="/get-licence" variant="contained" sx={{ m: 1 }}>
-            Get Premium Account to access bots !
-            <ArrowForwardIcon />
-          </Button>
-        )}
-        {userProfile?.isAdmin ? (
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <Button href="/admin-panel" variant="contained" sx={{ m: 1 }}>
-              Admin panel
+          ) : (
+            <Button href="/get-licence" variant="contained" sx={{ m: 1 }}>
+              Get Premium Account to access bots !
               <ArrowForwardIcon />
             </Button>
-          </Box>
-        ) : (<Box />
+          )
+        ) : (
+          <CircularProgress />
         )}
-        {!user?.emailVerified ? (
+
+        {userAuth && userProfile ? (
+          userProfile?.isAdmin ? (
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Button href="/admin-panel" variant="contained" sx={{ m: 1 }}>
+                Admin panel
+                <ArrowForwardIcon />
+              </Button>
+            </Box>
+          ) : (
+            <Box />
+          )
+        ) : (
+          <CircularProgress />
+        )}
+
+        {!userAuth?.emailVerified ? (
           <Typography>
-            Pense à vérifier ton compte via le lien dans l'email de confirmation
+            Remember to check the confirmation email we sent you.
           </Typography>
         ) : (
           ""
         )}
-      </CustomBodyLayout>
+      </CenteredLayout>
     </div>
   );
 }

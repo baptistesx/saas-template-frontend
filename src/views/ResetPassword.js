@@ -1,4 +1,5 @@
-import { Box, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
+import CenteredLayout from "../components/CenteredLayout";
 import CustomAppBar from "../components/CustomAppBar";
 import ResetPasswordForm from "../components/ResetPasswordForm";
 
@@ -7,21 +8,11 @@ function ResetPassword() {
     <div>
       <CustomAppBar />
 
-      <Typography variant="h1" sx={{ textAlign: "center" }}>
-        Reset password
-      </Typography>
+      <CenteredLayout>
+        <Typography variant="h1">Reset password</Typography>
 
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "row",
-          padding: 1,
-          justifyContent: "space-around",
-          flexWrap: "wrap",
-        }}
-      >
         <ResetPasswordForm />
-      </Box>
+      </CenteredLayout>
     </div>
   );
 }

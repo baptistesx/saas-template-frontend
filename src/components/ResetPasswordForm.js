@@ -1,50 +1,75 @@
+import { yupResolver } from "@hookform/resolvers/yup";
 import { LoadingButton } from "@mui/lab";
 import { Card, CardActions, CardContent, TextField } from "@mui/material";
-import { Box, useTheme } from "@mui/system";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useAuth } from "reactfire";
+import * as yup from "yup";
+import { resetPassword } from "../firebase";
+
+const schema = yup
+  .object({
+    email: yup
+      .string()
+      .email("Must be a valid email")
+      .max(255)
+      .required("Email is required"),
+  })
+  .required();
 
 const ResetPasswordForm = () => {
+  const [email, setEmail] = useState("");
+
+  const auth = useAuth();
+
   const [isLoading, setIsLoading] = useState(false);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
 
-  const onResetPasswordClick = (data) => {
-    console.log(data);
+  //TODO: use snackbar
+  const onSubmit = async (data) => {
+    setIsLoading(true);
+    await resetPassword(auth, email);
+    setIsLoading(false);
+    alert("Password reset link sent!");
   };
 
   return (
-    <Box sx={{ width: "45%", minWidth: "320px", m: 1 }}>
-      <form onSubmit={handleSubmit(onResetPasswordClick)}>
-        <Card sx={{ p: 1 }}>
-          <CardContent>
-            <TextField
-              fullWidth
-              placeholder="Email"
-              {...register("email")}
-              required
-              sx={{ m: 1 }}
-            />
-          </CardContent>
-          <CardActions>
-            <LoadingButton
-              sx={{
-                m: 1,
-              }}
-              type="submit"
-              variant="contained"
-              loading={isLoading}
-            >
-              Reset password
-            </LoadingButton>
-          </CardActions>
-        </Card>
-      </form>
-    </Box>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Card>
+        <CardContent>
+          <TextField
+            fullWidth
+            placeholder="Email"
+            {...register("email")}
+            required
+            onChange={(event) => {
+              setEmail(event.target.value);
+            }}
+          />
+          <p>{errors.email?.message}</p>
+        </CardContent>
+
+        <CardActions>
+          <LoadingButton
+            sx={{
+              m: 1,
+            }}
+            type="submit"
+            variant="contained"
+            loading={isLoading}
+          >
+            Reset password
+          </LoadingButton>
+        </CardActions>
+      </Card>
+    </form>
   );
 };
 

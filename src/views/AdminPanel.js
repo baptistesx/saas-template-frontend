@@ -22,10 +22,10 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
+import { useFirestore } from "reactfire";
+import CenteredLayout from "../components/CenteredLayout";
 import CustomAppBar from "../components/CustomAppBar";
-import CustomBodyLayout from "../components/CustomBodyLayout";
 import { deleteUserById, getUsers, toggleAdminRights } from "../firebase";
-import {useFirestore} from "reactfire"
 
 function AdminPanel() {
   const [isLoading, setIsLoading] = useState(true);
@@ -40,12 +40,9 @@ function AdminPanel() {
     setIsLoading(true);
 
     const res = await getUsers(db);
-    if(res?.error){
+    if (res?.error) {
       setUsers([]);
-
-    }
-    else{
-
+    } else {
       setUsers([...res]);
     }
     setIsLoading(false);
@@ -81,7 +78,7 @@ function AdminPanel() {
     <div>
       <CustomAppBar />
 
-      <CustomBodyLayout>
+      <CenteredLayout>
         <Typography variant="h1">Admin Panel</Typography>
 
         <Card
@@ -216,7 +213,7 @@ function AdminPanel() {
             </LoadingButton>
           </CardActions>
         </Card>
-      </CustomBodyLayout>
+      </CenteredLayout>
     </div>
   );
 }

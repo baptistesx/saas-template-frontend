@@ -2,28 +2,33 @@ import { Button, Typography } from "@mui/material";
 import React from "react";
 import { useSigninCheck } from "reactfire";
 import CustomAppBar from "../components/CustomAppBar";
-import CustomBodyLayout from "../components/CustomBodyLayout";
+import CenteredLayout from "../components/CenteredLayout";
+import { useHistory } from "react-router-dom";
 
 function NotFound() {
   const { data: signInCheckResult } = useSigninCheck();
+
+  const history = useHistory();
+
+  const redirect = () => {
+    if (signInCheckResult?.signedIn) {
+      history.push("/dashboard");
+    } else {
+      history.push("/");
+    }
+  };
 
   return (
     <div>
       <CustomAppBar />
 
-      <CustomBodyLayout>
+      <CenteredLayout>
         <Typography variant="h1">Error 404</Typography>
 
-        {!signInCheckResult?.signedIn ? (
-          <Button variant="contained" href="/">
-            Back home
-          </Button>
-        ) : (
-          <Button variant="contained" href="/dashboard">
-            Back home
-          </Button>
-        )}
-      </CustomBodyLayout>
+        <Button variant="contained" onClick={redirect}>
+          Back home
+        </Button>
+      </CenteredLayout>
     </div>
   );
 }

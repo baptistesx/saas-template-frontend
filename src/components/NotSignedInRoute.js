@@ -5,7 +5,7 @@ import { Redirect, Route } from "react-router-dom";
 function NotSignedInRoute({ component: Component, ...rest }) {
   const user = JSON.parse(localStorage.getItem("user"));
 
-  return user != null ? (
+  return user ? (
     <Redirect to="/not-found" />
   ) : (
     <Route {...rest} render={(props) => <Component {...rest} {...props} />} />

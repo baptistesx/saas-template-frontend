@@ -1,4 +1,5 @@
-import { Box, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
+import CenteredLayout from "../components/CenteredLayout";
 import CustomAppBar from "../components/CustomAppBar";
 import SignUpForm from "../components/SignUpForm";
 
@@ -7,21 +8,11 @@ function SignUp() {
     <div>
       <CustomAppBar />
 
-      <Typography variant="h1" sx={{ textAlign: "center" }}>
-        Sign Up
-      </Typography>
+      <CenteredLayout>
+        <Typography variant="h1">Sign Up</Typography>
 
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "row",
-          padding: 1,
-          justifyContent: "space-around",
-          flexWrap: "wrap",
-        }}
-      >
         <SignUpForm />
-      </Box>
+      </CenteredLayout>
     </div>
   );
 }

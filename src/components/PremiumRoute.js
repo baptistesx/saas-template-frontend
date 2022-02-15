@@ -1,7 +1,7 @@
 import { default as React } from "react";
 import { Redirect, Route } from "react-router-dom";
 
-// Only premium members can access these PremiumRoutes
+// Only premium members can access PremiumRoutes
 const PremiumRoute = ({ component: Component, ...rest }) => {
   const isPremium = JSON.parse(localStorage.getItem("user"))?.isPremium;
 

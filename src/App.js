@@ -44,9 +44,9 @@ function App() {
         <ThemeProvider theme={theme}>
           <Router>
             <Switch>
+              <NotSignedInRoute exact path="/" component={Home} />
               <NotSignedInRoute exact path="/signup" component={SignUp} />
               <NotSignedInRoute exact path="/signin" component={SignIn} />
-              <NotSignedInRoute exact path="/" component={Home} />
               <NotSignedInRoute
                 exact
                 path="/reset-password"

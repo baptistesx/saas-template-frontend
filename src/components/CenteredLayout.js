@@ -1,7 +1,7 @@
 import { Box } from "@mui/system";
 import React from "react";
 
-const CustomBodyLayout = ({ children }) => {
+const CenteredLayout = ({ children }) => {
   return (
     <Box
       sx={{
@@ -15,4 +15,4 @@ const CustomBodyLayout = ({ children }) => {
   );
 };
 
-export default CustomBodyLayout;
+export default CenteredLayout;

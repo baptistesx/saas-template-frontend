@@ -2,6 +2,7 @@ import {
   createUserWithEmailAndPassword,
   deleteUser,
   GoogleAuthProvider,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
@@ -16,8 +17,12 @@ import {
   where,
 } from "firebase/firestore";
 
+//Check how these functions can access AuthProvider and FirestoreProvider
+// in order not to have to pass auth and db parameters to functions everytime
 
-const signInWithGoogle = async ({auth, db}) => {
+//TODO: when the user already connected himself once with google account
+//and his password is memorized, allow him to change google account in the popup
+const signInWithGoogle = async ({ auth, db }) => {
   const provider = new GoogleAuthProvider();
 
   try {
@@ -38,7 +43,7 @@ const signInWithGoogle = async ({auth, db}) => {
         JSON.stringify({
           isNewUser: false,
           ...docSnap.data(),
-          id: user.uid
+          id: user.uid,
         })
       );
       return { isNewUser: false, data: docSnap.data(), id: user.uid };
@@ -49,9 +54,8 @@ const signInWithGoogle = async ({auth, db}) => {
       await setDoc(docRef, {
         email: user.email,
         isAdmin: false,
-        isPremium:false
+        isPremium: false,
       });
-
 
       localStorage.setItem(
         "user",
@@ -65,8 +69,8 @@ const signInWithGoogle = async ({auth, db}) => {
         isNewUser: true,
         data: docSnap.data(),
         id: user.uid,
-        isAdmin: false,        isPremium:false
-
+        isAdmin: false,
+        isPremium: false,
       };
     }
   } catch (err) {
@@ -115,8 +119,8 @@ const registerWithEmailAndPassword = async ({ auth, db, email, password }) => {
 
     await setDoc(docRef, {
       email: email,
-      isAdmin: false,        isPremium:false
-
+      isAdmin: false,
+      isPremium: false,
     });
     console.log("auth.currentUser", auth.currentUser);
     localStorage.setItem(
@@ -124,7 +128,7 @@ const registerWithEmailAndPassword = async ({ auth, db, email, password }) => {
       JSON.stringify({ ...res.user, id: res.user.uid })
     );
 
-    // Send Email Verification and redirect to my website.
+    // TODO: to uncomment for production
     //await sendEmailVerification(auth.currentUser);
 
     return { data: res.user, id: res.user.uid };
@@ -134,14 +138,13 @@ const registerWithEmailAndPassword = async ({ auth, db, email, password }) => {
   }
 };
 
-//TODO: to implement on the frontend
-const sendPasswordResetEmail = async (auth, email) => {
+//TODO: update emails content and reset password page style
+const resetPassword = async (auth, email) => {
+  console.log(email);
   try {
-    await auth.sendPasswordResetEmail(email);
-    alert("Password reset link sent!");
+    await sendPasswordResetEmail(auth, email);
   } catch (err) {
     console.error(err);
-    alert(err.message);
   }
 };
 
@@ -221,7 +224,7 @@ export {
   signInWithGoogle,
   loginWithEmailAndPassword,
   registerWithEmailAndPassword,
-  sendPasswordResetEmail,
+  resetPassword,
   logout,
   getUsers,
   deleteUserById,
