@@ -6,7 +6,11 @@ function NotSignedInRoute({ component: Component, ...rest }) {
   const user = JSON.parse(localStorage.getItem("user"));
 
   return user ? (
-    <Redirect to="/not-found" />
+    rest.path === "/" ? (
+      <Redirect to="/dashboard" />
+    ) : (
+      <Redirect to="/not-found" />
+    )
   ) : (
     <Route {...rest} render={(props) => <Component {...rest} {...props} />} />
   );
