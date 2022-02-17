@@ -7,7 +7,7 @@ import AdminRoute from "./components/routes/AdminRoute";
 import NotSignedInRoute from "./components/routes/NotSignedInRoute";
 import PremiumRoute from "./components/routes/PremiumRoute";
 import SignedInRoute from "./components/routes/SignedInRoute";
-import AdminPanel from "./views/AdminPanel";
+import Users from "./views/Users";
 import ResetPassword from "./views/auth/ResetPassword";
 import SignIn from "./views/auth/SignIn";
 import SignUp from "./views/auth/SignUp";
@@ -56,7 +56,7 @@ function App() {
             component={WorkawayBot}
           />
 
-          <AdminRoute exact path="/admin-panel" component={AdminPanel} />
+          <AdminRoute exact path="/admin-panel" component={Users} />
 
           <Route path="/*" component={NotFound} />
         </Switch>

@@ -27,7 +27,7 @@ import { deleteUserById, getUsers, toggleAdminRights } from "../api/functions";
 import GlobalLayout from "../components/layout/GlobalLayout";
 import EditUserDialog from "../components/users/EditUserDialog";
 
-function AdminPanel() {
+function Users() {
   const currentUser = JSON.parse(localStorage.getItem("user"));
 
   const [isLoading, setIsLoading] = useState(true);
@@ -113,7 +113,7 @@ function AdminPanel() {
 
   return (
     <GlobalLayout>
-      <Typography variant="h1">Admin Panel</Typography>
+      <Typography variant="h1">Users</Typography>
 
       <Card>
         <CardContent>
@@ -245,4 +245,4 @@ function AdminPanel() {
   );
 }
 
-export default AdminPanel;
+export default Users;
