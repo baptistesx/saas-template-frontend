@@ -7,9 +7,9 @@ import {
   FormControlLabel,
   MenuItem,
   TextField,
-  Typography,
+  Typography
 } from "@mui/material";
-import { Box, useTheme } from "@mui/system";
+import { Box } from "@mui/system";
 import axios from "axios";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -20,15 +20,9 @@ const InfoForm = () => {
   const [isStopping, setIsStopping] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
 
-  const [isDevMode, setIsDevMode] = useState(
-    process.env?.REACT_APP_DEV_MODE === "TRUE"
-  );
-  const theme = useTheme();
-
   const {
     register,
     handleSubmit,
-    watch,
     control,
     formState: { errors },
   } = useForm();
@@ -41,7 +35,7 @@ const InfoForm = () => {
     }
 
     setIsStarting(true);
-    console.log(data);
+
     const res = await axios.post(`${ENDPOINT}startBot`, {
       ...data,
       developmentMode: data,
@@ -131,13 +125,11 @@ const InfoForm = () => {
                   onChange={onChange}
                   sx={{ m: 1 }}
                 >
-                  <MenuItem value={5}>5 km</MenuItem>
-                  <MenuItem value={10}>10 km</MenuItem>
-                  <MenuItem value={20}>20 km</MenuItem>
-                  <MenuItem value={50}>50 km</MenuItem>
-                  <MenuItem value={100}>100 km</MenuItem>
-                  <MenuItem value={250}>250 km</MenuItem>
-                  <MenuItem value={500}>500 km</MenuItem>
+                  {[5, 10, 20, 50, 100, 250, 500].map((distance) => (
+                    <MenuItem key={distance} value={distance}>
+                      {distance} km
+                    </MenuItem>
+                  ))}
                 </TextField>
               )}
             />

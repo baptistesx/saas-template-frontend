@@ -1,21 +1,14 @@
 import { Typography } from "@mui/material";
-import CustomAppBar from "../../components/common/CustomAppBar";
 import SignInForm from "../../components/auth/SignInForm";
-import CenteredLayout from "../../components/layout/CenteredLayout";
+import GlobalLayout from "../../components/layout/GlobalLayout";
 
 function SignIn() {
   return (
-    <div>
-      <CustomAppBar />
+    <GlobalLayout>
+      <Typography variant="h1">Sign In</Typography>
 
-      <CenteredLayout>
-        <Typography variant="h1">
-          Sign In
-        </Typography>
-
-        <SignInForm />
-      </CenteredLayout>
-    </div>
+      <SignInForm />
+    </GlobalLayout>
   );
 }
 

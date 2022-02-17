@@ -11,7 +11,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
 import * as yup from "yup";
-import { loginWithEmailAndPassword } from "../../backendFunctions";
+import { loginWithEmailAndPassword } from "../../api/functions";
 
 //TODO: validate and update error message in direct live
 const schema = yup

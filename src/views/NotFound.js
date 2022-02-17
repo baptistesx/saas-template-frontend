@@ -1,8 +1,7 @@
 import { Button, Typography } from "@mui/material";
 import React from "react";
-import CustomAppBar from "../components/common/CustomAppBar";
-import CenteredLayout from "../components/layout/CenteredLayout";
 import { useHistory } from "react-router-dom";
+import GlobalLayout from "../components/layout/GlobalLayout";
 
 function NotFound() {
   const history = useHistory();
@@ -16,17 +15,13 @@ function NotFound() {
   };
 
   return (
-    <div>
-      <CustomAppBar />
+    <GlobalLayout>
+      <Typography variant="h1">Error 404</Typography>
 
-      <CenteredLayout>
-        <Typography variant="h1">Error 404</Typography>
-
-        <Button variant="contained" onClick={redirect}>
-          Back home
-        </Button>
-      </CenteredLayout>
-    </div>
+      <Button variant="contained" onClick={redirect}>
+        Back home
+      </Button>
+    </GlobalLayout>
   );
 }
 

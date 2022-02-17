@@ -1,4 +1,4 @@
-import { green, purple } from "@mui/material/colors";
+import { blue, green } from "@mui/material/colors";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
@@ -8,18 +8,22 @@ import NotSignedInRoute from "./components/routes/NotSignedInRoute";
 import PremiumRoute from "./components/routes/PremiumRoute";
 import SignedInRoute from "./components/routes/SignedInRoute";
 import AdminPanel from "./views/AdminPanel";
-import Dashboard from "./views/Dashboard";
-import Home from "./views/Home";
-import NotFound from "./views/NotFound";
 import ResetPassword from "./views/auth/ResetPassword";
 import SignIn from "./views/auth/SignIn";
 import SignUp from "./views/auth/SignUp";
-import WorkawayMessaging from "./views/workawayBot/WorkawayMessaging";
+import Dashboard from "./views/Dashboard";
+import Home from "./views/Home";
+import NotFound from "./views/NotFound";
+import WorkawayBot from "./views/workawayBot/WorkawayBot";
+
+//TODO: replace localStorage with Context
+//TODO: create custom hooks, example: useAuth
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: purple[500],
+      main: blue[900],
+      mainGradient: "linear-gradient(to right, #0d47a1, #2196f3)",
     },
     secondary: {
       main: green[500],
@@ -48,8 +52,8 @@ function App() {
 
           <PremiumRoute
             exact
-            path="/workaway-messaging"
-            component={WorkawayMessaging}
+            path="/workaway-bot"
+            component={WorkawayBot}
           />
 
           <AdminRoute exact path="/admin-panel" component={AdminPanel} />

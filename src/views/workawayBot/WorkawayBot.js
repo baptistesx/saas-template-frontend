@@ -1,34 +1,28 @@
 import { Box, Typography } from "@mui/material";
+import GlobalLayout from "../../components/layout/GlobalLayout";
 import BotLogs from "../../components/workawayBot/BotLogs";
-import CustomAppBar from "../../components/common/CustomAppBar";
 import FilesSection from "../../components/workawayBot/FilesSection";
 import InfoForm from "../../components/workawayBot/InfoForm";
 
-function WorkawayMessaging() {
+function WorkawayBot() {
   return (
-    <div>
-      <CustomAppBar />
-
-      <Typography variant="h1" sx={{ textAlign: "center" }}>
-        Bot Workaway messaging
-      </Typography>
+    <GlobalLayout>
+      <Typography variant="h1">Workaway Bot</Typography>
 
       <Box
         sx={{
           display: "flex",
-          flexDirection: "row",
-          padding: 1,
-          justifyContent: "space-around",
           flexWrap: "wrap",
         }}
       >
         <InfoForm />
+        
         <BotLogs />
       </Box>
 
       <FilesSection />
-    </div>
+    </GlobalLayout>
   );
 }
 
-export default WorkawayMessaging;
+export default WorkawayBot;

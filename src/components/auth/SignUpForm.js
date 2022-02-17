@@ -11,7 +11,10 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
 import * as yup from "yup";
-import { registerWithEmailAndPassword } from "../../backendFunctions";
+import {
+  registerWithEmailAndPassword,
+  loginWithEmailAndPassword,
+} from "../../api/functions";
 
 //TODO: validate and update error message in direct live
 //TODO: check if possible to validate form when browser autofill fields
@@ -52,14 +55,15 @@ const SignUpForm = () => {
   const onSubmit = async (data) => {
     setIsSigningUp(true);
 
-    const res = await registerWithEmailAndPassword({
+    const res1 = await registerWithEmailAndPassword({
       email,
       password,
     });
+    const res2 = await loginWithEmailAndPassword({ email, password });
 
     setIsSigningUp(false);
 
-    welcomeAndRedirectUser(res);
+    welcomeAndRedirectUser(res2);
   };
 
   const welcomeAndRedirectUser = (res) => {
