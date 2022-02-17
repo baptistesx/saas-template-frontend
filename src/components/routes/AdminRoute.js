@@ -3,7 +3,7 @@ import { Redirect, Route } from "react-router-dom";
 
 // AdminRoutes can only be accessed by admin members
 const AdminRoute = ({ component: Component, ...rest }) => {
-  const isAdmin= JSON.parse(localStorage.getItem("user"))?.isAdmin;
+  const isAdmin= JSON.parse(localStorage.getItem("user"))?.is_admin;
 
   return !isAdmin ? (
     <Redirect to="/not-found" />

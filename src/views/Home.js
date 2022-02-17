@@ -1,27 +1,17 @@
-import { Card, CardContent, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import React from "react";
-import CenteredLayout from "../components/CenteredLayout";
-import CustomAppBar from "../components/CustomAppBar";
+import GlobalLayout from "../components/layout/GlobalLayout";
 
 function Home() {
   return (
-    <div>
-      <CustomAppBar />
+    <GlobalLayout>
+      <Typography variant="h1">Home</Typography>
 
-      <CenteredLayout>
-        <Typography variant="h1" >
-          Home
-        </Typography>
-
-        <Card>
-          <CardContent>
-            <Typography variant="body">
-            Welcome on ImLazy.dev! You'll find here different ressources to save time in your life...
-            </Typography>
-          </CardContent>
-        </Card>
-      </CenteredLayout>
-    </div>
+      <Typography variant="body">
+        Welcome on ImLazy.dev! You'll find here different ressources to save
+        time in your life...
+      </Typography>
+    </GlobalLayout>
   );
 }
 

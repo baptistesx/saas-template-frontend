@@ -18,7 +18,7 @@ import {
 import axios from "axios";
 import * as React from "react";
 import { useEffect, useState } from "react";
-import { ENDPOINT } from "../utils/constants";
+import { ENDPOINT } from "../../utils/constants";
 
 const FilesSection = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);

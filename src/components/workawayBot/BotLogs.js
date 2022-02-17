@@ -17,7 +17,7 @@ import PropTypes from "prop-types";
 import * as React from "react";
 import { useEffect, useRef, useState } from "react";
 import socketIOClient from "socket.io-client";
-import { ENDPOINT } from "../utils/constants";
+import { ENDPOINT } from "../../utils/constants";
 
 let botLogsMessageSentIsFirst = true;
 

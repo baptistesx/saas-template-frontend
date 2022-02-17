@@ -3,9 +3,7 @@ import { LoadingButton } from "@mui/lab";
 import { Card, CardActions, CardContent, TextField } from "@mui/material";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useAuth } from "reactfire";
 import * as yup from "yup";
-import { resetPassword } from "../firebase";
 
 const schema = yup
   .object({
@@ -20,8 +18,6 @@ const schema = yup
 const ResetPasswordForm = () => {
   const [email, setEmail] = useState("");
 
-  const auth = useAuth();
-
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -35,8 +31,12 @@ const ResetPasswordForm = () => {
   //TODO: use snackbar
   const onSubmit = async (data) => {
     setIsLoading(true);
-    await resetPassword(auth, email);
+
+    //TODO
+    //await resetPassword(email);
+
     setIsLoading(false);
+
     alert("Password reset link sent!");
   };
 
